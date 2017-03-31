@@ -33,6 +33,7 @@ import com.github.javaparser.ast.nodeTypes.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 import com.github.javaparser.ast.visitor.Visitable;
+import com.github.javaparser.ast.visitor.VoidRuleVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 
 import java.util.*;
@@ -52,6 +53,8 @@ import static java.util.stream.Collectors.joining;
 public class PrettyPrintVisitor implements VoidVisitor<Void> {
     protected final PrettyPrinterConfiguration configuration;
     protected final SourcePrinter printer;
+
+    private VoidRuleVisitor<Void> ruleVisitor;
 
     public PrettyPrintVisitor(PrettyPrinterConfiguration prettyPrinterConfiguration) {
         configuration = prettyPrinterConfiguration;
@@ -183,7 +186,7 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         printer.print(postfix);
     }
 
-    private void printComment(final Optional<Comment> comment, final Void arg) {
+    void printComment(final Optional<Comment> comment, final Void arg) {
         comment.ifPresent(c -> c.accept(this, arg));
     }
 
@@ -205,16 +208,34 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         }
 
         for (final Iterator<TypeDeclaration<?>> i = n.getTypes().iterator(); i.hasNext(); ) {
-            i.next().accept(this, arg);
-            printer.println();
-            if (i.hasNext()) {
-                printer.println();
-            }
+            TypeDeclaration type = i.next();
+            vistType( type, arg, i );
         }
 
         n.getModule().ifPresent(m -> m.accept(this, arg));
 
         printOrphanCommentsEnding(n);
+    }
+
+    private void vistType( TypeDeclaration type, Void arg, Iterator<?> i ) {
+        if ( acceptType( type ) ) {
+            type.accept( this, arg );
+            printer.println();
+            if ( i.hasNext() ) {
+                printer.println();
+            }
+        } else {
+            for ( final Iterator<BodyDeclaration<?>> j = type.getMembers().iterator(); j.hasNext(); ) {
+                BodyDeclaration body = j.next();
+                if (body instanceof TypeDeclaration) {
+                    vistType( ( (TypeDeclaration) body ), arg, j);
+                }
+            }
+        }
+    }
+
+    protected boolean acceptType(TypeDeclaration type) {
+        return true;
     }
 
     @Override
@@ -1636,6 +1657,16 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         printer.println(";");
     }
 
+    @Override
+    public VoidRuleVisitor<Void> getRuleVisitor() {
+        return ruleVisitor != null ? ruleVisitor : DUMMY_RULE_VISITOR;
+    }
+
+    public void setRuleVisitor( VoidRuleVisitor<Void> ruleVisitor ) {
+        this.ruleVisitor = ruleVisitor;
+    }
+
+    private void printOrphanCommentsBeforeThisChildNode( final Node node ) {
     @Override
     public void visit(UnparsableStmt n, Void arg) {
         printer.print("???;");

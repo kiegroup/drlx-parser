@@ -219,6 +219,11 @@ public interface VoidVisitor<A> {
 
     void visit(ReceiverParameter n, A arg);
 
+    VoidRuleVisitor DUMMY_RULE_VISITOR = new VoidRuleVisitor() {
+    };
+
+    VoidRuleVisitor<A> getRuleVisitor();
+
     void visit(VarType n, A arg);
 
     void visit(Modifier n, A arg);
