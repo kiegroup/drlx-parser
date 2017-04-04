@@ -17,21 +17,28 @@
 package org.drools.drlx;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 
+import org.drools.core.ruleunit.RuleUnitFactory;
 import org.kie.api.KieBase;
 import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.rule.RuleUnit;
 import org.kie.api.runtime.rule.RuleUnitExecutor;
+
+import static java.util.Arrays.asList;
 
 public class CompiledUnit {
 
-    private final String packageName;
-    private final String unitName;
+    private final List<String> unitNames;
     private final KieContainer kieContainer;
 
-    public CompiledUnit( String packageName, String unitName, KieContainer kieContainer ) {
-        this.packageName = packageName;
-        this.unitName = unitName;
+    public CompiledUnit( KieContainer kieContainer, String unitName ) {
+        this(kieContainer, asList(unitName));
+    }
+
+    public CompiledUnit( KieContainer kieContainer, List<String> unitNames ) {
         this.kieContainer = kieContainer;
+        this.unitNames = unitNames;
     }
 
     public RuleUnitExecutor createExecutor() {
@@ -40,16 +47,20 @@ public class CompiledUnit {
     }
 
     public String getName() {
-        return packageName + "." + unitName;
+        return unitNames.get(0);
     }
 
-    public ClassLoader getClassLoader() {
+    private ClassLoader getClassLoader() {
         return kieContainer.getClassLoader();
+    }
+
+    public RuleUnit getOrCreateRuleUnit() {
+        return new RuleUnitFactory().getOrCreateRuleUnit( getName(), getClassLoader() );
     }
 
     public Constructor<?> getConstructorFor(String className, Class<?>... parameterTypes) {
         try {
-            Class<?> domainClass = Class.forName( getName() + "$" + className, true, getClassLoader() );
+            Class<?> domainClass = Class.forName( className, true, getClassLoader() );
             return domainClass.getConstructor( parameterTypes );
         } catch (Exception e) {
             throw new RuntimeException( e );

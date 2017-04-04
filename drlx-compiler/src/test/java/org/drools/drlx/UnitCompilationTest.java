@@ -18,33 +18,46 @@ package org.drools.drlx;
 
 import java.lang.reflect.Constructor;
 
-import org.drools.core.ruleunit.RuleUnitFactory;
 import org.junit.Test;
 import org.kie.api.runtime.rule.DataSource;
 import org.kie.api.runtime.rule.RuleUnit;
 import org.kie.api.runtime.rule.RuleUnitExecutor;
 
-import static org.drools.drlx.DrlxCompiler.compile;
 import static org.junit.Assert.assertEquals;
 
 public class UnitCompilationTest {
 
     @Test
-    public void test() throws Exception {
-        CompiledUnit unit = compile(getClass().getClassLoader().getResourceAsStream( "AdultUnit.java" ));
+    public void testSingleFileUnit() throws Exception {
+        CompiledUnit unit = DrlxCompiler.compileSingleSource( getClass().getClassLoader().getResourceAsStream( "unit1/AdultUnit.java" ) );
 
         RuleUnitExecutor executor = unit.createExecutor();
 
-        Constructor<?> constructor = unit.getConstructorFor( "Person", String.class, int.class );
+        Constructor<?> constructor = unit.getConstructorFor( "org.mypackage.AdultUnit$Person", String.class, int.class );
 
         DataSource<?> persons = executor.newDataSource( "persons",
                                                          constructor.newInstance( "Mario", 43 ),
                                                          constructor.newInstance( "Marilena", 44 ),
                                                          constructor.newInstance( "Sofia", 5 ) );
 
-        // explicitly create unit
-        RuleUnit ruleUnit = new RuleUnitFactory().getOrCreateRuleUnit( unit.getName(), unit.getClassLoader() );
+        RuleUnit ruleUnit = unit.getOrCreateRuleUnit();
+        assertEquals(2, executor.run( ruleUnit ) );
+    }
 
+    @Test
+    public void testFolderUnit() throws Exception {
+        CompiledUnit unit = DrlxCompiler.compileFolder( "src/test/resources/unit2" );
+
+        RuleUnitExecutor executor = unit.createExecutor();
+
+        Constructor<?> constructor = unit.getConstructorFor( "org.mypackage.Person", String.class, int.class );
+
+        DataSource<?> persons = executor.newDataSource( "persons",
+                                                         constructor.newInstance( "Mario", 43 ),
+                                                         constructor.newInstance( "Marilena", 44 ),
+                                                         constructor.newInstance( "Sofia", 5 ) );
+
+        RuleUnit ruleUnit = unit.getOrCreateRuleUnit();
         assertEquals(2, executor.run( ruleUnit ) );
     }
 }

@@ -16,16 +16,20 @@
 
 package org.drools.drlx;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import org.kie.api.KieServices;
-import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.ReleaseId;
 import org.kie.api.builder.model.KieModuleModel;
@@ -33,15 +37,67 @@ import org.kie.api.runtime.KieContainer;
 
 import static com.github.javaparser.printer.PrintUtil.toDrl;
 import static com.github.javaparser.printer.PrintUtil.toJava;
-import static org.junit.Assert.assertTrue;
+import static org.drools.drlx.DrlxUtils.hasRules;
 
 public class DrlxCompiler {
 
-    public static CompiledUnit compile(InputStream source) {
-        return compile(new InputStreamReader( source ));
+    public static CompiledUnit compileFolder(String folder) {
+        return compileFolder( folder, KieServices.get().getRepository().getDefaultReleaseId() );
     }
 
-    public static CompiledUnit compile(Reader source) {
+    public static CompiledUnit compileFolder(String folder, ReleaseId releaseId) {
+        KieServices ks = KieServices.get();
+        KieFileSystem kfs = createKieFileSystem( ks, releaseId );
+
+        File file = new File(folder);
+        if (!file.exists()) {
+            throw new RuntimeException( "File not found: " + file.getAbsolutePath() );
+        }
+        List<String> units = addToFileSystem(kfs, file);
+        KieContainer kieContainer = createKieContainer( ks, kfs, releaseId );
+        return new CompiledUnit(kieContainer, units);
+    }
+
+    private static List<String> addToFileSystem( KieFileSystem kfs, File file ) {
+        List<String> units = new ArrayList<>();
+        addToFileSystem( kfs, file, units );
+        return units;
+    }
+
+    private static void addToFileSystem( KieFileSystem kfs, File file, List<String> units ) {
+        if (file.isDirectory()) {
+            for (File subfile : file.listFiles()) {
+                addToFileSystem( kfs, subfile, units );
+            }
+        } else {
+            CompilationUnit compilationUnit;
+            try {
+                compilationUnit = JavaParser.parse( new FileReader( file ) );
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException( e );
+            }
+
+            ClassOrInterfaceDeclaration unitClass = (ClassOrInterfaceDeclaration) compilationUnit.getType( 0 );
+            String pkg = compilationUnit.getPackageDeclaration().map( PackageDeclaration::getNameAsString ).orElse( "defaultpkg" );
+            String unit = unitClass.getNameAsString();
+            String unitPath = pkg.replace( ".", "/" ) + "/" + unit;
+
+            kfs.write("src/main/java/" + unitPath + ".java", toJava( compilationUnit ));
+            if (hasRules(compilationUnit)) {
+                kfs.write("src/main/resources/" + unitPath + ".drl", toDrl( compilationUnit ));
+            }
+
+            if ( unitClass.getImplementedTypes().stream().anyMatch( type -> type.getNameAsString().equals( "RuleUnit" ) ) ) {
+                units.add(pkg + "." + unit);
+            }
+        }
+    }
+
+    public static CompiledUnit compileSingleSource( InputStream source ) {
+        return compileSingleSource( new InputStreamReader( source ) );
+    }
+
+    public static CompiledUnit compileSingleSource( Reader source ) {
         CompilationUnit compilationUnit = JavaParser.parse( source );
 
         ClassOrInterfaceDeclaration unitClass = (ClassOrInterfaceDeclaration) compilationUnit.getType( 0 );
@@ -50,11 +106,7 @@ public class DrlxCompiler {
 
         KieServices ks = KieServices.get();
         ReleaseId releaseId = ks.newReleaseId( pkg, unit, "1.0" );
-
-        KieModuleModel kproj = ks.newKieModuleModel();
-        KieFileSystem kfs = ks.newKieFileSystem();
-        kfs.writeKModuleXML(kproj.toXML());
-        kfs.writePomXML(getPom(releaseId));
+        KieFileSystem kfs = createKieFileSystem( ks, releaseId );
 
         String unitPath = pkg.replace( ".", "/" ) + "/" + unit;
         String javaPath = "src/main/java/" + unitPath + ".java";
@@ -63,11 +115,21 @@ public class DrlxCompiler {
         kfs.write(drlPath, toDrl( compilationUnit ))
            .write(javaPath, toJava( compilationUnit ));
 
-        KieBuilder kieBuilder = ks.newKieBuilder( kfs );
-        assertTrue(kieBuilder.buildAll().getResults().getMessages().isEmpty());
-        KieContainer kieContainer = ks.newKieContainer( releaseId );
+        KieContainer kieContainer = createKieContainer( ks, kfs, releaseId );
+        return new CompiledUnit(kieContainer, pkg + "." + unit);
+    }
 
-        return new CompiledUnit(pkg, unit, kieContainer);
+    private static KieContainer createKieContainer( KieServices ks, KieFileSystem kfs, ReleaseId releaseId ) {
+        ks.newKieBuilder( kfs ).buildAll();
+        return ks.newKieContainer( releaseId );
+    }
+
+    private static KieFileSystem createKieFileSystem( KieServices ks, ReleaseId releaseId ) {
+        KieModuleModel kproj = ks.newKieModuleModel();
+        KieFileSystem kfs = ks.newKieFileSystem();
+        kfs.writeKModuleXML(kproj.toXML());
+        kfs.writePomXML(getPom(releaseId));
+        return kfs;
     }
 
     private static String getPom(ReleaseId releaseId) {
