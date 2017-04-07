@@ -26,16 +26,22 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 public class OOPathChunk extends Node {
 
     private final SimpleName field;
+    private final SimpleName inlineCast;
     private final Expression condition;
 
-    public OOPathChunk( Range range, SimpleName field, Expression condition ) {
+    public OOPathChunk( Range range, SimpleName field, SimpleName inlineCast, Expression condition ) {
         super( range );
         this.field = field;
+        this.inlineCast = inlineCast;
         this.condition = condition;
     }
 
     public SimpleName getField() {
         return field;
+    }
+
+    public SimpleName getInlineCast() {
+        return inlineCast;
     }
 
     public Expression getCondition() {

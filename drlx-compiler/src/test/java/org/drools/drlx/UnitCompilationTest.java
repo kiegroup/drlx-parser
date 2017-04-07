@@ -50,14 +50,15 @@ public class UnitCompilationTest {
 
         RuleUnitExecutor executor = unit.createExecutor();
 
-        Constructor<?> constructor = unit.getConstructorFor( "org.mypackage.Person", String.class, int.class );
+        Constructor<?> personConstructor = unit.getConstructorFor( "org.mypackage.Person", String.class, int.class );
+        Constructor<?> childConstructor = unit.getConstructorFor( "org.mypackage.Child", String.class, int.class, int.class );
 
         DataSource<?> persons = executor.newDataSource( "persons",
-                                                         constructor.newInstance( "Mario", 43 ),
-                                                         constructor.newInstance( "Marilena", 44 ),
-                                                         constructor.newInstance( "Sofia", 5 ) );
+                                                        personConstructor.newInstance( "Mario", 43 ),
+                                                        personConstructor.newInstance( "Marilena", 44 ),
+                                                        childConstructor.newInstance( "Sofia", 5, 10 ) );
 
         RuleUnit ruleUnit = unit.getOrCreateRuleUnit();
-        assertEquals(2, executor.run( ruleUnit ) );
+        assertEquals(1, executor.run( ruleUnit ) );
     }
 }

@@ -2891,15 +2891,16 @@ OOPathChunk OOPathChunk():
 {
     Position begin;
     SimpleName field;
+    SimpleName inlineCast = null;
     Expression condition = null;
 }
 {
   field = SimpleName() { begin=tokenBegin(); }
+  [ "#" inlineCast = SimpleName() ]
   [ "[" condition = Expression() "]" ]
 
-    { return new OOPathChunk(range(begin, tokenEnd()), field, condition); }
-}
-TypeDeclaration<?> TypeDeclarationParseStart():
+    { return new OOPathChunk(range(begin, tokenEnd()), field, inlineCast, condition); }
+}TypeDeclaration<?> TypeDeclarationParseStart():
 {
 	TypeDeclaration<?> ret;
 	ModifierHolder modifier;

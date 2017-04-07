@@ -17,14 +17,10 @@ public class AdultUnit implements RuleUnit {
         return persons;
     }
 
-    public int getAdultAge() {
-        return adultAge;
-    }
-
-    rule Adult {
-        Person p = /persons[age > 18];
+    rule HasManyToys {
+        Child c = /persons#Child[toysNr > 5];
         do {
-            System.out.println(p.getName());
+            System.out.println(c.getName());
         }
     }
 }

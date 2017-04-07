@@ -25,6 +25,7 @@ import com.github.javaparser.ast.drlx.RuleDeclaration;
 import com.github.javaparser.ast.drlx.RulePattern;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.AbstractVoidRuleVisitor;
@@ -88,10 +89,22 @@ public class DrlPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintVi
     public void visit( OOPathChunk chunk, Void arg ) {
         visitor.printer.print("/");
         chunk.getField().accept( visitor, arg );
+
         Expression condition = chunk.getCondition();
+        SimpleName inlineCast = chunk.getInlineCast();
+
         if (condition != null) {
             visitor.printer.print("{");
+            if (inlineCast != null) {
+                visitor.printer.print("#");
+                inlineCast.accept( visitor, arg );
+                visitor.printer.print(", ");
+            }
             condition.accept( visitor, arg );
+            visitor.printer.print("}");
+        } else if (inlineCast != null) {
+            visitor.printer.print("{ #");
+            inlineCast.accept( visitor, arg );
             visitor.printer.print("}");
         }
     }
