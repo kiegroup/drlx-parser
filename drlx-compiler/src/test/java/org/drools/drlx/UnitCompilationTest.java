@@ -33,7 +33,7 @@ public class UnitCompilationTest {
 
         RuleUnitExecutor executor = unit.createExecutor();
 
-        Constructor<?> constructor = unit.getConstructorFor( "org.mypackage.AdultUnit$Person", String.class, int.class );
+        Constructor<?> constructor = unit.getConstructorFor( "org.unit1.AdultUnit$Person", String.class, int.class );
 
         DataSource<?> persons = executor.newDataSource( "persons",
                                                          constructor.newInstance( "Mario", 43 ),
@@ -50,8 +50,8 @@ public class UnitCompilationTest {
 
         RuleUnitExecutor executor = unit.createExecutor();
 
-        Constructor<?> personConstructor = unit.getConstructorFor( "org.mypackage.Person", String.class, int.class );
-        Constructor<?> childConstructor = unit.getConstructorFor( "org.mypackage.Child", String.class, int.class, int.class );
+        Constructor<?> personConstructor = unit.getConstructorFor( "org.unit2.Person", String.class, int.class );
+        Constructor<?> childConstructor = unit.getConstructorFor( "org.unit2.Child", String.class, int.class, int.class );
 
         DataSource<?> persons = executor.newDataSource( "persons",
                                                         personConstructor.newInstance( "Mario", 43 ),
@@ -60,5 +60,23 @@ public class UnitCompilationTest {
 
         RuleUnit ruleUnit = unit.getOrCreateRuleUnit();
         assertEquals(1, executor.run( ruleUnit ) );
+    }
+
+    @Test
+    public void testMultipleConsequences() throws Exception {
+        CompiledUnit unit = DrlxCompiler.compileFolder( "src/test/resources/unit3" );
+
+        RuleUnitExecutor executor = unit.createExecutor();
+
+        Constructor<?> personConstructor = unit.getConstructorFor( "org.unit3.Person", String.class, int.class );
+        Constructor<?> childConstructor = unit.getConstructorFor( "org.unit3.Child", String.class, int.class, int.class );
+
+        DataSource<?> persons = executor.newDataSource( "persons",
+                                                        personConstructor.newInstance( "Mario", 43 ),
+                                                        personConstructor.newInstance( "Marilena", 44 ),
+                                                        childConstructor.newInstance( "Sofia", 5, 10 ) );
+
+        RuleUnit ruleUnit = unit.getOrCreateRuleUnit();
+        assertEquals(3, executor.run( ruleUnit ) );
     }
 }

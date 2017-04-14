@@ -1,4 +1,4 @@
-package org.mypackage;
+package org.unit1;
 
 import org.kie.api.runtime.rule.RuleUnit;
 import org.kie.api.runtime.rule.DataSource;

@@ -16,12 +16,16 @@
 
 package com.github.javaparser.printer;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.github.javaparser.ast.drlx.OOPathChunk;
 import com.github.javaparser.ast.drlx.OOPathExpr;
 import com.github.javaparser.ast.drlx.RuleBody;
+import com.github.javaparser.ast.drlx.RuleConsequence;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
+import com.github.javaparser.ast.drlx.RuleItem;
 import com.github.javaparser.ast.drlx.RulePattern;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.Expression;
@@ -54,20 +58,37 @@ public class DrlPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintVi
 
     @Override
     public void visit( RuleBody ruleBody, Void arg ) {
-        for ( Iterator<RulePattern> i = ruleBody.getPatterns().iterator(); i.hasNext(); ) {
-            RulePattern pattern = i.next();
-            pattern.accept( visitor, arg );
-            visitor.printer.println();
-        }
-        visitor.printer.println("then ");
-        BlockStmt consequence = ruleBody.getConsequence();
-        if (consequence != null) {
-            for ( Iterator<Statement> i = consequence.getStatements().iterator(); i.hasNext(); ) {
-                Statement statement = i.next();
-                statement.accept( visitor, arg );
+        Map<String, RuleConsequence> consequences = new HashMap<>();
+        RuleConsequence lastConsequence = null;
+        int itemsNr = ruleBody.getItems().size();
+
+        for ( int i = 0; i < itemsNr; i++ ) {
+            RuleItem item = ruleBody.getItems().get( i );
+            if (item instanceof RulePattern) {
+                RulePattern pattern = ( (RulePattern) item );
+                pattern.accept( visitor, arg );
                 visitor.printer.println();
+            } else if (item instanceof RuleConsequence) {
+                RuleConsequence consequence = ( (RuleConsequence) item );
+                if (i == itemsNr-1) {
+                    lastConsequence = consequence;
+                } else {
+                    String consequenceName = "exec" + i;
+                    consequences.put(consequenceName, consequence);
+                    visitor.printer.println("do[" + consequenceName + "] ");
+                }
             }
         }
+
+        visitor.printer.println("then ");
+        if (lastConsequence != null) {
+            lastConsequence.accept( visitor, arg );
+        }
+
+        consequences.forEach( (name, consequence) -> {
+            visitor.printer.println("then[" + name + "] ");
+            consequence.accept( visitor, arg );
+        }  );
     }
 
     @Override
@@ -75,6 +96,18 @@ public class DrlPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintVi
         rulePattern.getBind().accept(visitor, arg);
         visitor.printer.print(" : ");
         rulePattern.getExpr().accept(visitor, arg);
+    }
+
+    @Override
+    public void visit( RuleConsequence ruleConsequence, Void arg ) {
+        BlockStmt consequence = ruleConsequence.getBlock();
+        if (consequence != null) {
+            for ( Iterator<Statement> i = consequence.getStatements().iterator(); i.hasNext(); ) {
+                Statement statement = i.next();
+                statement.accept( visitor, arg );
+                visitor.printer.println();
+            }
+        }
     }
 
     @Override

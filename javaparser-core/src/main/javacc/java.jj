@@ -2832,28 +2832,31 @@ RuleDeclaration RuleDeclaration(ModifierHolder modifier):
 
 RuleBody RuleBody():
 {
-    NodeList<RulePattern> patterns = emptyList();
-    BlockStmt consequence = null;
+    NodeList<RuleItem> items = emptyList();
     Position begin;
 }
 {
-  "{" {begin=tokenBegin();}
-  [ patterns = RulePatterns() ]
-  [ "do" consequence = Block() ]
+  "{" { begin=tokenBegin(); }
+  items = RuleItems()
   "}"
 
-    { return new RuleBody(range(begin, tokenEnd()), patterns, consequence); }
+    { return new RuleBody(range(begin, tokenEnd()), items); }
 }
 
-NodeList<RulePattern> RulePatterns():
+NodeList<RuleItem> RuleItems():
 {
-    NodeList<RulePattern> patterns = emptyList();
-    RulePattern pattern;
+    NodeList<RuleItem> items = emptyList();
+    RuleItem item;
+    RuleConsequence consequnce;
 }
 {
-  pattern = RulePattern() { patterns.add(pattern); }
+  (
+    item = RulePattern() { items.add(item); }
+  |
+    item = RuleConsequence() { items.add(item); }
+  )*
 
-    { return patterns; }
+    { return items; }
 }
 
 RulePattern RulePattern():
@@ -2871,6 +2874,18 @@ RulePattern RulePattern():
   ";"
 
     { return new RulePattern(range(begin, tokenEnd()), type, bind, expr); }
+}
+
+RuleConsequence RuleConsequence():
+{
+    Position begin;
+    BlockStmt block;
+}
+{
+  "do" { begin=tokenBegin(); }
+  block = Block()
+
+    { return new RuleConsequence(range(begin, tokenEnd()), block); }
 }
 
 OOPathExpr OOPathExpr():

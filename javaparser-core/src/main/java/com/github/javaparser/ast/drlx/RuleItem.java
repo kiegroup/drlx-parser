@@ -18,30 +18,10 @@ package com.github.javaparser.ast.drlx;
 
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
 
-public class RuleBody extends Node {
+public abstract class RuleItem extends Node {
 
-    private final NodeList<RuleItem> items;
-
-    public RuleBody( Range range, NodeList<RuleItem> items ) {
+    public RuleItem( Range range ) {
         super( range );
-        this.items = items;
-    }
-
-    public NodeList<RuleItem> getItems() {
-        return items;
-    }
-
-    @Override
-    public <R, A> R accept( GenericVisitor<R, A> v, A arg ) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <A> void accept( VoidVisitor<A> v, A arg ) {
-        v.getRuleVisitor().visit( this, arg );
     }
 }

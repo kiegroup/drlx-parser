@@ -1,4 +1,4 @@
-package org.unit2;
+package org.unit3;
 
 public class Person {
     private final String name;

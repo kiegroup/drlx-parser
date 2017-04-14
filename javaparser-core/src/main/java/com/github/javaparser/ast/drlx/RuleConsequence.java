@@ -17,33 +17,21 @@
 package com.github.javaparser.ast.drlx;
 
 import com.github.javaparser.Range;
-import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 
-public class RulePattern extends RuleItem {
+public class RuleConsequence extends RuleItem {
 
-    private final SimpleName type;
-    private final SimpleName bind;
-    private final OOPathExpr expr;
+    private final BlockStmt block;
 
-    public RulePattern( Range range, SimpleName type, SimpleName bind, OOPathExpr expr ) {
+    public RuleConsequence( Range range, BlockStmt block ) {
         super( range );
-        this.type = type;
-        this.bind = bind;
-        this.expr = expr;
+        this.block = block;
     }
 
-    public SimpleName getType() {
-        return type;
-    }
-
-    public SimpleName getBind() {
-        return bind;
-    }
-
-    public OOPathExpr getExpr() {
-        return expr;
+    public BlockStmt getBlock() {
+        return block;
     }
 
     @Override

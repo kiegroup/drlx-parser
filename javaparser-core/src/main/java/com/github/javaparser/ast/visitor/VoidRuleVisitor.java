@@ -19,6 +19,7 @@ package com.github.javaparser.ast.visitor;
 import com.github.javaparser.ast.drlx.OOPathChunk;
 import com.github.javaparser.ast.drlx.OOPathExpr;
 import com.github.javaparser.ast.drlx.RuleBody;
+import com.github.javaparser.ast.drlx.RuleConsequence;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
 import com.github.javaparser.ast.drlx.RulePattern;
 
@@ -33,4 +34,6 @@ public interface VoidRuleVisitor<A> {
     default void visit( OOPathExpr expr, A arg ) { }
 
     default void visit( OOPathChunk chunk, A arg ) { }
+
+    default void visit( RuleConsequence ruleConsequence, A arg ) { }
 }
