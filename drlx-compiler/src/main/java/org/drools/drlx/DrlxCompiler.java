@@ -30,8 +30,11 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.Message;
 import org.kie.api.builder.ReleaseId;
+import org.kie.api.builder.Results;
 import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.runtime.KieContainer;
 
@@ -41,27 +44,25 @@ import static org.drools.drlx.DrlxUtils.hasRules;
 
 public class DrlxCompiler {
 
-    public static CompiledUnit compileFolder(String folder) {
-        return compileFolder( folder, KieServices.get().getRepository().getDefaultReleaseId() );
+    public static CompiledUnit compileFolders(String... folders) {
+        return compileFolders(  KieServices.get().getRepository().getDefaultReleaseId(), folders );
     }
 
-    public static CompiledUnit compileFolder(String folder, ReleaseId releaseId) {
+    public static CompiledUnit compileFolders(ReleaseId releaseId, String... folders) {
         KieServices ks = KieServices.get();
         KieFileSystem kfs = createKieFileSystem( ks, releaseId );
 
-        File file = new File(folder);
-        if (!file.exists()) {
-            throw new RuntimeException( "File not found: " + file.getAbsolutePath() );
+        List<String> units = new ArrayList<>();
+        for (String folder : folders) {
+            File file = new File( folder );
+            if ( !file.exists() ) {
+                throw new RuntimeException( "File not found: " + file.getAbsolutePath() );
+            }
+            addToFileSystem( kfs, file, units );
         }
-        List<String> units = addToFileSystem(kfs, file);
+
         KieContainer kieContainer = createKieContainer( ks, kfs, releaseId );
         return new CompiledUnit(kieContainer, units);
-    }
-
-    private static List<String> addToFileSystem( KieFileSystem kfs, File file ) {
-        List<String> units = new ArrayList<>();
-        addToFileSystem( kfs, file, units );
-        return units;
     }
 
     private static void addToFileSystem( KieFileSystem kfs, File file, List<String> units ) {
@@ -120,7 +121,11 @@ public class DrlxCompiler {
     }
 
     private static KieContainer createKieContainer( KieServices ks, KieFileSystem kfs, ReleaseId releaseId ) {
-        ks.newKieBuilder( kfs ).buildAll();
+        KieBuilder kieBuilder = ks.newKieBuilder( kfs ).buildAll();
+        Results results = kieBuilder.getResults();
+        if (results.hasMessages( Message.Level.ERROR )) {
+            throw new RuntimeException(results.getMessages().toString());
+        }
         return ks.newKieContainer( releaseId );
     }
 

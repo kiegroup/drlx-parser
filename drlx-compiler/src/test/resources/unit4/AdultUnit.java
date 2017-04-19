@@ -1,4 +1,4 @@
-package org.unit2;
+package org.unit4;
 
 import org.kie.api.runtime.rule.RuleUnit;
 import org.kie.api.runtime.rule.DataSource;
@@ -6,7 +6,6 @@ import org.kie.api.runtime.rule.DataSource;
 import org.model.*;
 
 public class AdultUnit implements RuleUnit {
-    private int adultAge = 0;
     private DataSource<Person> persons;
 
     public AdultUnit( ) { }
@@ -19,8 +18,9 @@ public class AdultUnit implements RuleUnit {
         return persons;
     }
 
-    rule HasManyToys {
+    rule ParentOfHasManyToys {
         Child c = /persons#Child[toysNr > 5];
+        Person p = /persons[age < c.age || name.length > c.name.length];
         do {
             System.out.println(c.getName());
         }

@@ -1,4 +1,4 @@
-package org.unit2;
+package org.model;
 
 public class Child extends Person {
     private final int toysNr;

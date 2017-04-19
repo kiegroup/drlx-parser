@@ -46,12 +46,12 @@ public class UnitCompilationTest {
 
     @Test
     public void testFolderUnit() throws Exception {
-        CompiledUnit unit = DrlxCompiler.compileFolder( "src/test/resources/unit2" );
+        CompiledUnit unit = DrlxCompiler.compileFolders( "src/test/resources/model", "src/test/resources/unit2" );
 
         RuleUnitExecutor executor = unit.createExecutor();
 
-        Constructor<?> personConstructor = unit.getConstructorFor( "org.unit2.Person", String.class, int.class );
-        Constructor<?> childConstructor = unit.getConstructorFor( "org.unit2.Child", String.class, int.class, int.class );
+        Constructor<?> personConstructor = unit.getConstructorFor( "org.model.Person", String.class, int.class );
+        Constructor<?> childConstructor = unit.getConstructorFor( "org.model.Child", String.class, int.class, int.class );
 
         DataSource<?> persons = executor.newDataSource( "persons",
                                                         personConstructor.newInstance( "Mario", 43 ),
@@ -64,12 +64,12 @@ public class UnitCompilationTest {
 
     @Test
     public void testMultipleConsequences() throws Exception {
-        CompiledUnit unit = DrlxCompiler.compileFolder( "src/test/resources/unit3" );
+        CompiledUnit unit = DrlxCompiler.compileFolders( "src/test/resources/model", "src/test/resources/unit3" );
 
         RuleUnitExecutor executor = unit.createExecutor();
 
-        Constructor<?> personConstructor = unit.getConstructorFor( "org.unit3.Person", String.class, int.class );
-        Constructor<?> childConstructor = unit.getConstructorFor( "org.unit3.Child", String.class, int.class, int.class );
+        Constructor<?> personConstructor = unit.getConstructorFor( "org.model.Person", String.class, int.class );
+        Constructor<?> childConstructor = unit.getConstructorFor( "org.model.Child", String.class, int.class, int.class );
 
         DataSource<?> persons = executor.newDataSource( "persons",
                                                         personConstructor.newInstance( "Mario", 43 ),
@@ -78,5 +78,23 @@ public class UnitCompilationTest {
 
         RuleUnit ruleUnit = unit.getOrCreateRuleUnit();
         assertEquals(3, executor.run( ruleUnit ) );
+    }
+
+    @Test
+    public void testOr() throws Exception {
+        CompiledUnit unit = DrlxCompiler.compileFolders( "src/test/resources/model", "src/test/resources/unit4" );
+
+        RuleUnitExecutor executor = unit.createExecutor();
+
+        Constructor<?> personConstructor = unit.getConstructorFor( "org.model.Person", String.class, int.class );
+        Constructor<?> childConstructor = unit.getConstructorFor( "org.model.Child", String.class, int.class, int.class );
+
+        DataSource<?> persons = executor.newDataSource( "persons",
+                                                        personConstructor.newInstance( "Mario", 43 ),
+                                                        personConstructor.newInstance( "Marilena", 44 ),
+                                                        childConstructor.newInstance( "Sofia", 5, 10 ) );
+
+        RuleUnit ruleUnit = unit.getOrCreateRuleUnit();
+        assertEquals(1, executor.run( ruleUnit ) );
     }
 }

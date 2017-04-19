@@ -3,6 +3,8 @@ package org.unit3;
 import org.kie.api.runtime.rule.RuleUnit;
 import org.kie.api.runtime.rule.DataSource;
 
+import org.model.*;
+
 public class AdultUnit implements RuleUnit {
     private int adultAge = 0;
     private DataSource<Person> persons;

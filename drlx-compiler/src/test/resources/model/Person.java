@@ -1,4 +1,4 @@
-package org.unit3;
+package org.model;
 
 public class Person {
     private final String name;
