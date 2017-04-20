@@ -19,6 +19,7 @@ package org.drools.drlx;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
+import org.drools.core.impl.InternalRuleUnitExecutor;
 import org.drools.core.ruleunit.RuleUnitFactory;
 import org.kie.api.KieBase;
 import org.kie.api.runtime.KieContainer;
@@ -31,6 +32,7 @@ public class CompiledUnit {
 
     private final List<String> unitNames;
     private final KieContainer kieContainer;
+    private InternalRuleUnitExecutor executor;
 
     public CompiledUnit( KieContainer kieContainer, String unitName ) {
         this(kieContainer, asList(unitName));
@@ -43,7 +45,8 @@ public class CompiledUnit {
 
     public RuleUnitExecutor createExecutor() {
         KieBase kbase = kieContainer.getKieBase();
-        return RuleUnitExecutor.create().bind( kbase );
+        executor = (InternalRuleUnitExecutor) RuleUnitExecutor.create();
+        return executor.bind( kbase );
     }
 
     public String getName() {
@@ -55,7 +58,7 @@ public class CompiledUnit {
     }
 
     public RuleUnit getOrCreateRuleUnit() {
-        return new RuleUnitFactory().getOrCreateRuleUnit( getName(), getClassLoader() );
+        return new RuleUnitFactory().getOrCreateRuleUnit( executor , getName(), getClassLoader() );
     }
 
     public Constructor<?> getConstructorFor(String className, Class<?>... parameterTypes) {

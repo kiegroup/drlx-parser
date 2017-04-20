@@ -5,7 +5,8 @@
         <version>3.2.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    
+    <groupId>org.drools</groupId>
     <artifactId>drlx-compiler</artifactId>
     <packaging>jar</packaging>
     <description>DRLX compiler</description>
