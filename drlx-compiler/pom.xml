@@ -8,6 +8,7 @@
     
     <groupId>org.drools</groupId>
     <artifactId>drlx-compiler</artifactId>
+    <version>8.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>DRLX compiler</description>
 
@@ -33,7 +34,7 @@
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-core</artifactId>
-            <version>${project.version}</version>
+            <version>3.2.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
