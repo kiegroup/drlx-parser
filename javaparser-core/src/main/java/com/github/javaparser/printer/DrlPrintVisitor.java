@@ -123,22 +123,17 @@ public class DrlPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintVi
         visitor.printer.print("/");
         chunk.getField().accept( visitor, arg );
 
-        Expression condition = chunk.getCondition();
         SimpleName inlineCast = chunk.getInlineCast();
-
-        if (condition != null) {
-            visitor.printer.print("{");
-            if (inlineCast != null) {
-                visitor.printer.print("#");
-                inlineCast.accept( visitor, arg );
-                visitor.printer.print(", ");
-            }
-            condition.accept( visitor, arg );
-            visitor.printer.print("}");
-        } else if (inlineCast != null) {
-            visitor.printer.print("{ #");
+        if (inlineCast != null) {
+            visitor.printer.print( "#" );
             inlineCast.accept( visitor, arg );
-            visitor.printer.print("}");
+        }
+
+        Expression condition = chunk.getCondition();
+        if (condition != null) {
+            visitor.printer.print( "[" );
+            condition.accept( visitor, arg );
+            visitor.printer.print( "]" );
         }
     }
 }
