@@ -21,6 +21,7 @@ import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
 import org.junit.Test;
 
+import static com.github.javaparser.printer.PrintUtil.toDrlx;
 import static org.junit.Assert.assertEquals;
 
 public class DrlxParserTest {
@@ -35,5 +36,19 @@ public class DrlxParserTest {
         assertEquals("name", binaryExpr.getLeft().toString());
         assertEquals("\"Mark\"", binaryExpr.getRight().toString());
         assertEquals(Operator.EQUALS, binaryExpr.getOperator());
+    }
+
+    @Test
+    public void testParseSafeCastExpr() {
+        String expr = "this instanceof Person && ((Person)this).name == \"Mark\"";
+        Expression expression = DrlxParser.parseExpression( expr );
+        System.out.println(expression);
+    }
+
+    @Test
+    public void testParseInlineCastExpr() {
+        String expr = "this#Person.name == \"Mark\"";
+        Expression expression = DrlxParser.parseExpression( expr );
+        System.out.println(toDrlx(expression));
     }
 }

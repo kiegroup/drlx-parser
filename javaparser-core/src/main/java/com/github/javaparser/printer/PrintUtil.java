@@ -19,23 +19,23 @@ package com.github.javaparser.printer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
 import com.github.javaparser.ast.visitor.VoidRuleVisitor;
 
 public class PrintUtil {
 
-    public static String toJava(CompilationUnit unit) {
-        return unit.toString();
+    public static String toJava(Node node ) {
+        return node.toString();
     }
 
-    public static String toDrlx(CompilationUnit unit) {
-        return unit.toString(getConf( DrlxPrintVisitor::new, type -> true ));
+    public static String toDrlx(Node node) {
+        return node.toString(getConf( DrlxPrintVisitor::new, type -> true ));
     }
 
-    public static String toDrl(CompilationUnit unit) {
-        return unit.toString(getConf( DrlPrintVisitor::new, type -> type instanceof RuleDeclaration ) );
+    public static String toDrl(Node node) {
+        return node.toString(getConf( DrlPrintVisitor::new, type -> type instanceof RuleDeclaration ) );
     }
 
     private static PrettyPrinterConfiguration getConf( Function<PrettyPrintVisitor, VoidRuleVisitor<Void>> f, Predicate<TypeDeclaration> p ) {

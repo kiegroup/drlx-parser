@@ -18,6 +18,7 @@ package com.github.javaparser.printer;
 
 import com.github.javaparser.ast.drlx.RuleBody;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
+import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.visitor.AbstractVoidRuleVisitor;
 
@@ -45,5 +46,12 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
 
     @Override
     public void visit( RuleBody ruleBody, Void arg ) {
+    }
+
+    @Override
+    public void visit( InlineCastExpr inlineCastExpr, Void arg ) {
+        inlineCastExpr.getExpression().accept( visitor, arg );
+        visitor.printer.print( "#" );
+        inlineCastExpr.getType().accept( visitor, arg );
     }
 }

@@ -55,6 +55,7 @@ import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.*;
 import com.github.javaparser.ast.drlx.*;
+import com.github.javaparser.ast.drlx.expr.*;
 import com.github.javaparser.ast.modules.*;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
@@ -71,7 +72,7 @@ import static com.github.javaparser.ast.type.ArrayType.*;
 import static com.github.javaparser.GeneratedJavaParserTokenManagerBase.*;
 
 @Generated("JavaCC")
-final class GeneratedJavaParser extends GeneratedJavaParserBase {
+public final class GeneratedJavaParser extends GeneratedJavaParserBase {
     /* Returns the JavaParser specific token type of the last matched token */
     JavaToken token() {
         return token.javaToken;
@@ -1881,6 +1882,7 @@ Expression PrimarySuffixWithoutSuper(Expression scope):
 	NodeList<Expression> args = emptyList();
 	boolean hasArgs = false;
 	SimpleName name;
+	Type type;
 }
 {
   (
@@ -1904,6 +1906,17 @@ Expression PrimarySuffixWithoutSuper(Expression scope):
 	)
 	|
 	  "["ret = Expression() "]" { ret = new ArrayAccessExpr(range(scope, token()), scope, ret); }
+// drlx start
+	|
+	  "#"
+	  (
+	    name = SimpleName() { ret = new InlineCastExpr(range(scope.getBegin().get(), tokenEnd()),
+	                                                   new ClassOrInterfaceType(range(name.getBegin().get(), tokenEnd()), null, name, null),
+	                                                   scope); }
+	  |
+	    "(" type = Type() ")" { ret = new InlineCastExpr(range(scope.getBegin().get(), tokenEnd()), type, scope); }
+	  )
+// drlx end
   )
   { return ret; }
 }
@@ -2929,6 +2942,17 @@ OOPathChunk OOPathChunk():
 	<EOF>
 	{return ret;}
 }
+
+Expression DrlxExpression():
+{
+	Expression ret;
+}
+{
+  ret = Expression()
+
+  { return ret;}
+}
+
 
 ModuleDeclaration ModuleDeclarationParseStart():
 {

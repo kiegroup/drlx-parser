@@ -22,6 +22,7 @@ import com.github.javaparser.ast.drlx.RuleBody;
 import com.github.javaparser.ast.drlx.RuleConsequence;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
 import com.github.javaparser.ast.drlx.RulePattern;
+import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
 
 public interface VoidRuleVisitor<A> {
 
@@ -36,4 +37,7 @@ public interface VoidRuleVisitor<A> {
     default void visit( OOPathChunk chunk, A arg ) { }
 
     default void visit( RuleConsequence ruleConsequence, A arg ) { }
+
+    default void visit( InlineCastExpr inlineCastExpr, A arg ) { }
+
 }
