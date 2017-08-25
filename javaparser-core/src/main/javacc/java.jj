@@ -88,6 +88,14 @@ public final class GeneratedJavaParser extends GeneratedJavaParserBase {
     GeneratedJavaParserTokenManager getTokenSource() {
         return token_source;
     }
+
+    private boolean drlParsing = false;
+    private <T extends Node> T asDrlNode(T node) throws ParseException {
+        if (!drlParsing) {
+            throw new ParseException();
+        }
+        return node;
+    }
 }
 
 PARSER_END(GeneratedJavaParser)
@@ -1883,6 +1891,7 @@ Expression PrimarySuffixWithoutSuper(Expression scope):
 	boolean hasArgs = false;
 	SimpleName name;
 	Type type;
+	boolean isDrl = false;
 }
 {
   (
@@ -1908,7 +1917,7 @@ Expression PrimarySuffixWithoutSuper(Expression scope):
 	  "["ret = Expression() "]" { ret = new ArrayAccessExpr(range(scope, token()), scope, ret); }
 // drlx start
 	|
-	  "#"
+	  "#" {isDrl=true;}
 	  (
 	    name = SimpleName() { ret = new InlineCastExpr(range(scope.getBegin().get(), tokenEnd()),
 	                                                   new ClassOrInterfaceType(range(name.getBegin().get(), tokenEnd()), null, name, null),
@@ -1918,7 +1927,7 @@ Expression PrimarySuffixWithoutSuper(Expression scope):
 	  )
 // drlx end
   )
-  { return ret; }
+  { return isDrl ? asDrlNode(ret) : ret; }
 }
 
 Expression Literal():
@@ -2948,9 +2957,12 @@ Expression DrlxExpression():
 	Expression ret;
 }
 {
-  ret = Expression()
-
-  { return ret;}
+  {
+  drlParsing = true;
+  ret = Expression();
+  drlParsing = false;
+  return ret;
+  }
 }
 
 

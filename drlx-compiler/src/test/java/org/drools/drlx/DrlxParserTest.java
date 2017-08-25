@@ -16,6 +16,8 @@
 
 package org.drools.drlx;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
@@ -23,6 +25,7 @@ import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class DrlxParserTest {
 
@@ -50,5 +53,14 @@ public class DrlxParserTest {
         String expr = "this#Person.name == \"Mark\"";
         Expression expression = DrlxParser.parseExpression( expr );
         System.out.println(toDrlx(expression));
+    }
+
+    @Test
+    public void testNotAllowedInlineCastInJava() {
+        String expr = "this#Person.name == \"Mark\"";
+        try {
+            Expression expression = JavaParser.parseExpression( expr );
+            fail( "Parsing of non valid java expression must fail" );
+        } catch (ParseProblemException e) { }
     }
 }
