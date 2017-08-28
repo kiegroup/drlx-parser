@@ -63,4 +63,11 @@ public class DrlxParserTest {
             fail( "Parsing of non valid java expression must fail" );
         } catch (ParseProblemException e) { }
     }
+
+    @Test
+    public void testParseNullSafeFieldAccessExpr() {
+        String expr = "person!.name == \"Mark\"";
+        Expression expression = DrlxParser.parseExpression( expr );
+        System.out.println(toDrlx(expression));
+    }
 }

@@ -23,6 +23,8 @@ import com.github.javaparser.ast.drlx.RuleConsequence;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
 import com.github.javaparser.ast.drlx.RulePattern;
 import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
+import com.github.javaparser.ast.drlx.expr.NullSafeFieldAccessExpr;
+import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
 
 public interface VoidRuleVisitor<A> {
 
@@ -39,5 +41,9 @@ public interface VoidRuleVisitor<A> {
     default void visit( RuleConsequence ruleConsequence, A arg ) { }
 
     default void visit( InlineCastExpr inlineCastExpr, A arg ) { }
+
+    default void visit( NullSafeFieldAccessExpr nullSafeFieldAccessExpr, A arg ) { }
+
+    default void visit( NullSafeMethodCallExpr nullSafeMethodCallExpr, A arg ) { }
 
 }

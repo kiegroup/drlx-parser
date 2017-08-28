@@ -1925,6 +1925,25 @@ Expression PrimarySuffixWithoutSuper(Expression scope):
 	  |
 	    "(" type = Type() ")" { ret = new InlineCastExpr(range(scope.getBegin().get(), tokenEnd()), type, scope); }
 	  )
+	|
+  	  "!." {isDrl=true;}
+    (
+        "this" { ret = new ThisExpr(range(scope.getTokenRange().get().getBegin(), token()), scope); }
+      |
+        ret = AllocationExpression(scope)
+      |
+        LOOKAHEAD( [ TypeArguments() ] Identifier() )
+        [ typeArgs = TypeArguments() ]
+        name = SimpleName()
+        [ args = Arguments() {hasArgs=true;} ]
+        {
+            if (hasArgs) {
+                ret = new NullSafeMethodCallExpr(range(scope.getTokenRange().get().getBegin(), token()), scope, typeArgs.list, name, args);
+            } else {
+                ret =  new NullSafeFieldAccessExpr(range(scope.getTokenRange().get().getBegin(), token()), scope, typeArgs.list, name);
+            }
+        }
+    )
 // drlx end
   )
   { return isDrl ? asDrlNode(ret) : ret; }

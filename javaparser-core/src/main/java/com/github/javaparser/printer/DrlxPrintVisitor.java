@@ -19,6 +19,8 @@ package com.github.javaparser.printer;
 import com.github.javaparser.ast.drlx.RuleBody;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
 import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
+import com.github.javaparser.ast.drlx.expr.NullSafeFieldAccessExpr;
+import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.visitor.AbstractVoidRuleVisitor;
 
@@ -50,8 +52,29 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
 
     @Override
     public void visit( InlineCastExpr inlineCastExpr, Void arg ) {
+        visitor.printJavaComment(inlineCastExpr.getComment(), arg);
         inlineCastExpr.getExpression().accept( visitor, arg );
         visitor.printer.print( "#" );
         inlineCastExpr.getType().accept( visitor, arg );
+    }
+
+    @Override
+    public void visit( NullSafeFieldAccessExpr nullSafeFieldAccessExpr, Void arg ) {
+        visitor.printJavaComment(nullSafeFieldAccessExpr.getComment(), arg);
+        nullSafeFieldAccessExpr.getScope().accept( visitor, arg );
+        visitor.printer.print( "!." );
+        nullSafeFieldAccessExpr.getName().accept( visitor, arg );
+    }
+
+    @Override
+    public void visit( NullSafeMethodCallExpr nullSafeMethodCallExpr, Void arg ) {
+        visitor.printJavaComment(nullSafeMethodCallExpr.getComment(), arg);
+        if (nullSafeMethodCallExpr.getScope().isPresent()) {
+            nullSafeMethodCallExpr.getScope().get().accept( visitor, arg );
+            visitor.printer.print("!.");
+        }
+        visitor.printTypeArgs(nullSafeMethodCallExpr, arg);
+        nullSafeMethodCallExpr.getName().accept( visitor, arg );
+        visitor.printArguments(nullSafeMethodCallExpr.getArguments(), arg);
     }
 }
