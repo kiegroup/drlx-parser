@@ -25,6 +25,8 @@ import com.github.javaparser.ast.drlx.RulePattern;
 import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
 import com.github.javaparser.ast.drlx.expr.NullSafeFieldAccessExpr;
 import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
+import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
 
 public interface VoidRuleVisitor<A> {
 
@@ -45,5 +47,9 @@ public interface VoidRuleVisitor<A> {
     default void visit( NullSafeFieldAccessExpr nullSafeFieldAccessExpr, A arg ) { }
 
     default void visit( NullSafeMethodCallExpr nullSafeMethodCallExpr, A arg ) { }
+
+    default void visit( PointFreeExpr pointFreeExpr, A arg ) { }
+
+    default void visit( TemporalLiteralExpr temporalLiteralExpr, A arg ) { }
 
 }

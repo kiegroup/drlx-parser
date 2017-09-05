@@ -51,6 +51,7 @@ PARSER_BEGIN(GeneratedJavaParser)
 package com.github.javaparser;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.*;
@@ -90,6 +91,10 @@ public final class GeneratedJavaParser extends GeneratedJavaParserBase {
     }
 
     private boolean drlParsing = false;
+    public void setDrlParsing(boolean drlParsing) {
+        this.drlParsing = drlParsing;
+    }
+
     private <T extends Node> T asDrlNode(T node) throws ParseException {
         if (!drlParsing) {
             throw new ParseException();
@@ -2857,6 +2862,19 @@ PackageDeclaration PackageDeclarationParseStart():
 
 /* Rule syntax follows */
 
+TOKEN :
+{
+  < MILLISECOND_LITERAL: <DECIMAL_LITERAL> "ms" >
+|
+  < SECOND_LITERAL: <DECIMAL_LITERAL> "s" >
+|
+  < MINUTE_LITERAL: <DECIMAL_LITERAL> "m" >
+|
+  < HOUR_LITERAL: <DECIMAL_LITERAL> "h" >
+|
+  < DAY_LITERAL: <DECIMAL_LITERAL> "d" >
+}
+
 RuleDeclaration RuleDeclaration(ModifierHolder modifier):
 {
     SimpleName name;
@@ -2976,12 +2994,70 @@ Expression DrlxExpression():
 	Expression ret;
 }
 {
-  {
-  drlParsing = true;
-  ret = Expression();
-  drlParsing = false;
-  return ret;
-  }
+  (
+  LOOKAHEAD(PointFreeExpr())
+  ret = PointFreeExpr()
+  |
+  ret = Expression()
+  )
+
+  { return ret; }
+}
+
+PointFreeExpr PointFreeExpr():
+{
+    JavaToken begin;
+    Expression left;
+    Expression right;
+    SimpleName operator;
+    Expression arg1 = null;
+    Expression arg2 = null;
+}
+{
+    left = Expression() { begin=token(); }
+    operator = SimpleName()
+    [
+      LOOKAHEAD("[" TemporalLiteral() ",")
+      ( "[" arg1 = TemporalLiteral() "," arg2 = TemporalLiteral() "]" )
+      |
+      ( "[" arg1 = TemporalLiteral() "]" )
+    ]
+    right = Expression()
+
+      { return new PointFreeExpr(range(begin, token()), left, right, operator, arg1, arg2 ); }
+}
+
+Expression TemporalLiteral():
+{
+	Expression ret;
+}
+{
+  (
+	  <INTEGER_LITERAL> {
+	  		ret = new IntegerLiteralExpr(tokenRange(), token.image);
+	  }
+	|
+	  <MILLISECOND_LITERAL> {
+	  		ret = new TemporalLiteralExpr(tokenRange(), token.image, TimeUnit.MILLISECONDS);
+	  }
+	|
+	  <SECOND_LITERAL> {
+	  		ret = new TemporalLiteralExpr(tokenRange(), token.image, TimeUnit.SECONDS);
+	  }
+	|
+	  <MINUTE_LITERAL> {
+	  		ret = new TemporalLiteralExpr(tokenRange(), token.image, TimeUnit.MINUTES);
+	  }
+	|
+	  <HOUR_LITERAL> {
+	  		ret = new TemporalLiteralExpr(tokenRange(), token.image, TimeUnit.HOURS);
+	  }
+	|
+	  <DAY_LITERAL> {
+	  		ret = new TemporalLiteralExpr(tokenRange(), token.image, TimeUnit.DAYS);
+	  }
+  )
+  { return ret; }
 }
 
 

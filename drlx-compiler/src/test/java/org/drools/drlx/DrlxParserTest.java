@@ -18,6 +18,7 @@ package org.drools.drlx;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
@@ -25,6 +26,7 @@ import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class DrlxParserTest {
@@ -52,7 +54,7 @@ public class DrlxParserTest {
     public void testParseInlineCastExpr() {
         String expr = "this#Person.name == \"Mark\"";
         Expression expression = DrlxParser.parseExpression( expr );
-        System.out.println(toDrlx(expression));
+        assertEquals(expr, toDrlx(expression));
     }
 
     @Test
@@ -68,6 +70,30 @@ public class DrlxParserTest {
     public void testParseNullSafeFieldAccessExpr() {
         String expr = "person!.name == \"Mark\"";
         Expression expression = DrlxParser.parseExpression( expr );
-        System.out.println(toDrlx(expression));
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
+    public void testDotFreeExpr() {
+        String expr = "this after $a";
+        Expression expression = DrlxParser.parseExpression( expr );
+        assertTrue(expression instanceof PointFreeExpr);
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
+    public void testDotFreeExprWithArgs() {
+        String expr = "this after[5,8] $a";
+        Expression expression = DrlxParser.parseExpression( expr );
+        assertTrue(expression instanceof PointFreeExpr);
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
+    public void testDotFreeExprWithTemporalArgs() {
+        String expr = "this after[5m,8h] $a";
+        Expression expression = DrlxParser.parseExpression( expr );
+        assertTrue(expression instanceof PointFreeExpr);
+        assertEquals(expr, toDrlx(expression));
     }
 }

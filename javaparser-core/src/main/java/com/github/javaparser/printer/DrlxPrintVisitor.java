@@ -21,6 +21,8 @@ import com.github.javaparser.ast.drlx.RuleDeclaration;
 import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
 import com.github.javaparser.ast.drlx.expr.NullSafeFieldAccessExpr;
 import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
+import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.visitor.AbstractVoidRuleVisitor;
 
@@ -76,5 +78,47 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
         visitor.printTypeArgs(nullSafeMethodCallExpr, arg);
         nullSafeMethodCallExpr.getName().accept( visitor, arg );
         visitor.printArguments(nullSafeMethodCallExpr.getArguments(), arg);
+    }
+
+    @Override
+    public void visit( PointFreeExpr pointFreeExpr, Void arg ) {
+        visitor.printJavaComment(pointFreeExpr.getComment(), arg);
+        pointFreeExpr.getLeft().accept( visitor, arg );
+        visitor.printer.print(" ");
+        pointFreeExpr.getOperator().accept( visitor, arg );
+        if (pointFreeExpr.getArg1() != null) {
+            visitor.printer.print("[");
+            pointFreeExpr.getArg1().accept( visitor, arg );
+            if (pointFreeExpr.getArg2() != null) {
+                visitor.printer.print(",");
+                pointFreeExpr.getArg2().accept( visitor, arg );
+            }
+            visitor.printer.print("]");
+        }
+        visitor.printer.print(" ");
+        pointFreeExpr.getRight().accept( visitor, arg );
+    }
+
+    @Override
+    public void visit( TemporalLiteralExpr temporalLiteralExpr, Void arg ) {
+        visitor.printJavaComment(temporalLiteralExpr.getComment(), arg);
+        visitor.printer.print("" + temporalLiteralExpr.getValue());
+        switch (temporalLiteralExpr.getTimeUnit()) {
+            case MILLISECONDS:
+                visitor.printer.print("ms");
+                break;
+            case SECONDS:
+                visitor.printer.print("s");
+                break;
+            case MINUTES:
+                visitor.printer.print("m");
+                break;
+            case HOURS:
+                visitor.printer.print("h");
+                break;
+            case DAYS:
+                visitor.printer.print("d");
+                break;
+        }
     }
 }
