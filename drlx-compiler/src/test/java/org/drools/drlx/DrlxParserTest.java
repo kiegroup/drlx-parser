@@ -91,7 +91,7 @@ public class DrlxParserTest {
 
     @Test
     public void testDotFreeExprWithTemporalArgs() {
-        String expr = "this after[5m,8h] $a";
+        String expr = "this after[5ms,8d] $a";
         Expression expression = DrlxParser.parseExpression( expr );
         assertTrue(expression instanceof PointFreeExpr);
         assertEquals(expr, toDrlx(expression));
