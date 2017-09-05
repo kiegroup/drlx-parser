@@ -5,13 +5,13 @@
     <artifactId>javaparser-parent</artifactId>
     <version>3.2.1-SNAPSHOT</version>
   </parent>
-  
+
   <groupId>org.drools</groupId>
   <artifactId>drlx-examples</artifactId>
   <version>8.0.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
-  
+
   <modules>
     <module>drlx-example1</module>
   </modules>
