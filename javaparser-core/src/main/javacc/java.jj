@@ -2996,6 +2996,9 @@ Expression DrlxExpression():
   LOOKAHEAD(PointFreeExpr())
   ret = PointFreeExpr()
   |
+  LOOKAHEAD(OOPathExpr())
+    ret = OOPathExpr()
+  |
   ret = Expression()
   )
 

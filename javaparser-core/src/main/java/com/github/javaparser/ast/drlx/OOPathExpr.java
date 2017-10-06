@@ -17,12 +17,12 @@
 package com.github.javaparser.ast.drlx;
 
 import com.github.javaparser.Range;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 
-public class OOPathExpr extends Node {
+public class OOPathExpr extends Expression {
 
     private final NodeList<OOPathChunk> chunks;
 

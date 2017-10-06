@@ -18,6 +18,7 @@ package org.drools.drlx;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.ast.drlx.OOPathExpr;
 import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
@@ -94,6 +95,14 @@ public class DrlxParserTest {
         String expr = "this after[5ms,8d] $a";
         Expression expression = DrlxParser.parseExpression( expr );
         assertTrue(expression instanceof PointFreeExpr);
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
+    public void testOOPathExpr() {
+        String expr = "/wife/children[age > 10]/toys";
+        Expression expression = DrlxParser.parseExpression( expr );
+        assertTrue(expression instanceof OOPathExpr);
         assertEquals(expr, toDrlx(expression));
     }
 }

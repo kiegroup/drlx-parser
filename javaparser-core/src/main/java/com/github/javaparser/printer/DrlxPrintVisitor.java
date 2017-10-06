@@ -16,6 +16,9 @@
 
 package com.github.javaparser.printer;
 
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.drlx.OOPathChunk;
+import com.github.javaparser.ast.drlx.OOPathExpr;
 import com.github.javaparser.ast.drlx.RuleBody;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
 import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
@@ -24,6 +27,7 @@ import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
 import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
 import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.visitor.AbstractVoidRuleVisitor;
 
 public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintVisitor> {
@@ -119,6 +123,26 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
             case DAYS:
                 visitor.printer.print("d");
                 break;
+        }
+    }
+
+    @Override
+    public void visit(OOPathExpr pointFreeExpr, Void arg ) {
+        visitor.printJavaComment(pointFreeExpr.getComment(), arg);
+        visitor.printer.print("/");
+        NodeList<OOPathChunk> chunks = pointFreeExpr.getChunks();
+        for (int i = 0; i <  chunks.size(); i++) {
+            OOPathChunk o = chunks.get(i);
+            visitor.printer.print(o.getField().toString());
+            Expression condition = o.getCondition();
+            if (condition != null) {
+                visitor.printer.print("[");
+                visitor.printer.print(condition.toString());
+                visitor.printer.print("]");
+            }
+            if(i != chunks.size() - 1) { // Avoid printing last /
+                visitor.printer.print("/");
+            }
         }
     }
 }
