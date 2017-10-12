@@ -16,23 +16,18 @@
 
 package com.github.javaparser.printer;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import com.github.javaparser.ast.drlx.OOPathChunk;
-import com.github.javaparser.ast.drlx.OOPathExpr;
-import com.github.javaparser.ast.drlx.RuleBody;
-import com.github.javaparser.ast.drlx.RuleConsequence;
-import com.github.javaparser.ast.drlx.RuleDeclaration;
-import com.github.javaparser.ast.drlx.RuleItem;
-import com.github.javaparser.ast.drlx.RulePattern;
+import com.github.javaparser.ast.drlx.*;
+import com.github.javaparser.ast.drlx.expr.DrlxExpression;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.AbstractVoidRuleVisitor;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class DrlPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintVisitor> {
 

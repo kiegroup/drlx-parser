@@ -19,6 +19,7 @@ package org.drools.drlx;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.drlx.OOPathExpr;
+import com.github.javaparser.ast.drlx.expr.DrlxExpression;
 import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
@@ -26,16 +27,14 @@ import com.github.javaparser.ast.expr.Expression;
 import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class DrlxParserTest {
 
     @Test
     public void testParseSimpleExpr() {
         String expr = "name == \"Mark\"";
-        Expression expression = DrlxParser.parseExpression( expr );
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         System.out.println(expression);
 
         BinaryExpr binaryExpr = ( (BinaryExpr) expression );
@@ -47,14 +46,14 @@ public class DrlxParserTest {
     @Test
     public void testParseSafeCastExpr() {
         String expr = "this instanceof Person && ((Person)this).name == \"Mark\"";
-        Expression expression = DrlxParser.parseExpression( expr );
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         System.out.println(expression);
     }
 
     @Test
     public void testParseInlineCastExpr() {
         String expr = "this#Person.name == \"Mark\"";
-        Expression expression = DrlxParser.parseExpression( expr );
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         assertEquals(expr, toDrlx(expression));
     }
 
@@ -70,14 +69,14 @@ public class DrlxParserTest {
     @Test
     public void testParseNullSafeFieldAccessExpr() {
         String expr = "person!.name == \"Mark\"";
-        Expression expression = DrlxParser.parseExpression( expr );
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         assertEquals(expr, toDrlx(expression));
     }
 
     @Test
     public void testDotFreeExpr() {
         String expr = "this after $a";
-        Expression expression = DrlxParser.parseExpression( expr );
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
         assertEquals(expr, toDrlx(expression));
     }
@@ -85,7 +84,7 @@ public class DrlxParserTest {
     @Test
     public void testDotFreeExprWithArgs() {
         String expr = "this after[5,8] $a";
-        Expression expression = DrlxParser.parseExpression( expr );
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
         assertEquals(expr, toDrlx(expression));
     }
@@ -93,7 +92,7 @@ public class DrlxParserTest {
     @Test
     public void testDotFreeExprWithTemporalArgs() {
         String expr = "this after[5ms,8d] $a";
-        Expression expression = DrlxParser.parseExpression( expr );
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
         assertEquals(expr, toDrlx(expression));
     }
@@ -101,8 +100,19 @@ public class DrlxParserTest {
     @Test
     public void testOOPathExpr() {
         String expr = "/wife/children[age > 10]/toys";
-        Expression expression = DrlxParser.parseExpression( expr );
+        DrlxExpression drlx = DrlxParser.parseExpression( expr );
+        Expression expression = drlx.getExpr();
         assertTrue(expression instanceof OOPathExpr);
-        assertEquals(expr, toDrlx(expression));
+        assertEquals(expr, toDrlx(drlx));
+    }
+
+    @Test
+    public void testOOPathExprWithDeclaration() {
+        String expr = "$toy : /wife/children[age > 10]/toys";
+        DrlxExpression drlx = DrlxParser.parseExpression( expr );
+        assertEquals("$toy", drlx.getBind().asString());
+        Expression expression = drlx.getExpr();
+        assertTrue(expression instanceof OOPathExpr);
+        assertEquals(expr, toDrlx(drlx));
     }
 }

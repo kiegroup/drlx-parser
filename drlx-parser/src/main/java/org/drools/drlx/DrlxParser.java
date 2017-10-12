@@ -16,19 +16,15 @@
 
 package org.drools.drlx;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseProblemException;
-import com.github.javaparser.ParseResult;
-import com.github.javaparser.ParseStart;
-import com.github.javaparser.Provider;
+import com.github.javaparser.*;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.drlx.expr.DrlxExpression;
 
 import static com.github.javaparser.Providers.provider;
 
 public class DrlxParser {
 
-    private static final ParseStart<Expression> DRLX_EXPRESSION = parser -> {
+    private static final ParseStart<DrlxExpression> DRLX_EXPRESSION = parser -> {
         parser.setDrlParsing(true);
         try {
             return parser.DrlxExpression();
@@ -37,7 +33,7 @@ public class DrlxParser {
         }
     };
 
-    public static <T extends Expression> T parseExpression(final String expression) {
+    public static <T extends DrlxExpression> T parseExpression(final String expression) {
         return (T) simplifiedParse(DRLX_EXPRESSION, provider(expression));
     }
 

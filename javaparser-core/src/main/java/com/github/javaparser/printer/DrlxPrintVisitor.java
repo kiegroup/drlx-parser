@@ -21,11 +21,7 @@ import com.github.javaparser.ast.drlx.OOPathChunk;
 import com.github.javaparser.ast.drlx.OOPathExpr;
 import com.github.javaparser.ast.drlx.RuleBody;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
-import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
-import com.github.javaparser.ast.drlx.expr.NullSafeFieldAccessExpr;
-import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
-import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
-import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
+import com.github.javaparser.ast.drlx.expr.*;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.visitor.AbstractVoidRuleVisitor;
@@ -124,6 +120,15 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
                 visitor.printer.print("d");
                 break;
         }
+    }
+
+    @Override
+    public void visit( DrlxExpression expr, Void arg ) {
+        if (expr.getBind() != null) {
+            expr.getBind().accept( visitor, arg );
+            visitor.printer.print( " : " );
+        }
+        expr.getExpr().accept(visitor, arg);
     }
 
     @Override
