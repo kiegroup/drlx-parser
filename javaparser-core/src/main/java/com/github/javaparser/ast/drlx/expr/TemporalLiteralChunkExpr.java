@@ -16,19 +16,28 @@
 
 package com.github.javaparser.ast.drlx.expr;
 
+import java.util.concurrent.TimeUnit;
+
 import com.github.javaparser.TokenRange;
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 
-public class TemporalLiteralExpr extends LiteralExpr {
+public class TemporalLiteralChunkExpr extends LiteralExpr {
 
-    private final NodeList<TemporalLiteralChunkExpr> chunks;
+    private int value;
+    private TimeUnit timeUnit;
 
-    public TemporalLiteralExpr(TokenRange tokenRange, NodeList<TemporalLiteralChunkExpr> chunks) {
+    public TemporalLiteralChunkExpr(TokenRange tokenRange, String value) {
         super(tokenRange);
-        this.chunks = chunks;
+        this.value = Integer.parseInt(value);
+        this.timeUnit = TimeUnit.SECONDS;
+    }
+
+    public TemporalLiteralChunkExpr(TokenRange tokenRange, String value, TimeUnit timeUnit) {
+        super(tokenRange);
+        this.value = Integer.parseInt(value.substring(0, value.length() - (timeUnit == TimeUnit.MILLISECONDS ? 2 : 1)));
+        this.timeUnit = timeUnit;
     }
 
     @Override
@@ -41,8 +50,11 @@ public class TemporalLiteralExpr extends LiteralExpr {
         v.getRuleVisitor().visit( this, arg );
     }
 
-    public NodeList<TemporalLiteralChunkExpr> getChunks() {
-        return chunks;
+    public int getValue() {
+        return value;
     }
 
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
+    }
 }

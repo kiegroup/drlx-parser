@@ -23,6 +23,7 @@ import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.drlx.OOPathExpr;
 import com.github.javaparser.ast.drlx.expr.DrlxExpression;
 import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralChunkExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
@@ -125,8 +126,24 @@ public class DrlxParserTest {
     public void testParseTemporalLiteral() {
         String expr = "5s";
         TemporalLiteralExpr drlx = DrlxParser.parseTemporalLiteral(expr);
-        assertEquals(5, drlx.getValue());
-        assertEquals(TimeUnit.SECONDS, drlx.getTimeUnit());
         assertEquals(expr, toDrlx(drlx));
+        assertEquals(1, drlx.getChunks().size());
+        TemporalLiteralChunkExpr chunk0 = drlx.getChunks().get(0);
+        assertEquals(5, chunk0.getValue());
+        assertEquals(TimeUnit.SECONDS, chunk0.getTimeUnit());
+    }
+
+    @Test
+    public void testParseTemporalLiteralOf2Chunks() {
+        String expr = "1m5s";
+        TemporalLiteralExpr drlx = DrlxParser.parseTemporalLiteral(expr);
+        assertEquals(expr, toDrlx(drlx));
+        assertEquals(2, drlx.getChunks().size());
+        TemporalLiteralChunkExpr chunk0 = drlx.getChunks().get(0);
+        assertEquals(1, chunk0.getValue());
+        assertEquals(TimeUnit.MINUTES, chunk0.getTimeUnit());
+        TemporalLiteralChunkExpr chunk1 = drlx.getChunks().get(1);
+        assertEquals(5, chunk1.getValue());
+        assertEquals(TimeUnit.SECONDS, chunk1.getTimeUnit());
     }
 }

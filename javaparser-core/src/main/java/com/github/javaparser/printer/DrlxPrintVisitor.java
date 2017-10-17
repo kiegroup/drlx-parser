@@ -21,7 +21,13 @@ import com.github.javaparser.ast.drlx.OOPathChunk;
 import com.github.javaparser.ast.drlx.OOPathExpr;
 import com.github.javaparser.ast.drlx.RuleBody;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
-import com.github.javaparser.ast.drlx.expr.*;
+import com.github.javaparser.ast.drlx.expr.DrlxExpression;
+import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
+import com.github.javaparser.ast.drlx.expr.NullSafeFieldAccessExpr;
+import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
+import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralChunkExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.visitor.AbstractVoidRuleVisitor;
@@ -100,7 +106,16 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
     }
 
     @Override
-    public void visit( TemporalLiteralExpr temporalLiteralExpr, Void arg ) {
+    public void visit(TemporalLiteralExpr temporalLiteralExpr, Void arg) {
+        visitor.printJavaComment(temporalLiteralExpr.getComment(), arg);
+        NodeList<TemporalLiteralChunkExpr> chunks = temporalLiteralExpr.getChunks();
+        for (TemporalLiteralChunkExpr c : chunks) {
+            c.accept(visitor, arg);
+        }
+    }
+
+    @Override
+    public void visit(TemporalLiteralChunkExpr temporalLiteralExpr, Void arg) {
         visitor.printJavaComment(temporalLiteralExpr.getComment(), arg);
         visitor.printer.print("" + temporalLiteralExpr.getValue());
         switch (temporalLiteralExpr.getTimeUnit()) {

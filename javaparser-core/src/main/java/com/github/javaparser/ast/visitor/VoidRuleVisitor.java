@@ -16,8 +16,19 @@
 
 package com.github.javaparser.ast.visitor;
 
-import com.github.javaparser.ast.drlx.*;
-import com.github.javaparser.ast.drlx.expr.*;
+import com.github.javaparser.ast.drlx.OOPathChunk;
+import com.github.javaparser.ast.drlx.OOPathExpr;
+import com.github.javaparser.ast.drlx.RuleBody;
+import com.github.javaparser.ast.drlx.RuleConsequence;
+import com.github.javaparser.ast.drlx.RuleDeclaration;
+import com.github.javaparser.ast.drlx.RulePattern;
+import com.github.javaparser.ast.drlx.expr.DrlxExpression;
+import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
+import com.github.javaparser.ast.drlx.expr.NullSafeFieldAccessExpr;
+import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
+import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralChunkExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
 
 public interface VoidRuleVisitor<A> {
 
@@ -45,4 +56,5 @@ public interface VoidRuleVisitor<A> {
 
     default void visit( TemporalLiteralExpr temporalLiteralExpr, A arg ) { }
 
+    default void visit(TemporalLiteralChunkExpr temporalLiteralChunkExpr, A arg) {}
 }
