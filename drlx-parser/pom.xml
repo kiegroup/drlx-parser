@@ -8,7 +8,7 @@
     
     <groupId>org.drools</groupId>
     <artifactId>drlx-parser</artifactId>
-    <version>8.0.0-SNAPSHOT</version>
+    <version>7.5.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>DRLX compiler</description>
 
