@@ -16,9 +16,14 @@
 
 package org.drools.drlx;
 
-import com.github.javaparser.*;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.ParseStart;
+import com.github.javaparser.Provider;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.drlx.expr.DrlxExpression;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
 
 import static com.github.javaparser.Providers.provider;
 
@@ -33,6 +38,10 @@ public class DrlxParser {
         }
     };
 
+    private static final ParseStart<TemporalLiteralExpr> DRLX_TEMPORAL_LITERAL = parser -> {
+        return parser.TemporalLiteral();
+    };
+
     public static <T extends DrlxExpression> T parseExpression(final String expression) {
         return (T) simplifiedParse(DRLX_EXPRESSION, provider(expression));
     }
@@ -43,5 +52,9 @@ public class DrlxParser {
             return result.getResult().get();
         }
         throw new ParseProblemException(result.getProblems());
+    }
+
+    public static <T extends TemporalLiteralExpr> T parseTemporalLiteral(final String expression) {
+        return (T) simplifiedParse(DRLX_TEMPORAL_LITERAL, provider(expression));
     }
 }

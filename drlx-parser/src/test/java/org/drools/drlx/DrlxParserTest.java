@@ -16,18 +16,23 @@
 
 package org.drools.drlx;
 
+import java.util.concurrent.TimeUnit;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.drlx.OOPathExpr;
 import com.github.javaparser.ast.drlx.expr.DrlxExpression;
 import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
 import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class DrlxParserTest {
 
@@ -86,7 +91,7 @@ public class DrlxParserTest {
         String expr = "this after[5,8] $a";
         Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
-        assertEquals(expr, toDrlx(expression));
+        assertEquals("this after[5s,8s] $a", toDrlx(expression)); // please note the parsed expression once normalized would take the time unit for seconds.
     }
 
     @Test
@@ -113,6 +118,15 @@ public class DrlxParserTest {
         assertEquals("$toy", drlx.getBind().asString());
         Expression expression = drlx.getExpr();
         assertTrue(expression instanceof OOPathExpr);
+        assertEquals(expr, toDrlx(drlx));
+    }
+
+    @Test
+    public void testParseTemporalLiteral() {
+        String expr = "5s";
+        TemporalLiteralExpr drlx = DrlxParser.parseTemporalLiteral(expr);
+        assertEquals(5, drlx.getValue());
+        assertEquals(TimeUnit.SECONDS, drlx.getTimeUnit());
         assertEquals(expr, toDrlx(drlx));
     }
 }

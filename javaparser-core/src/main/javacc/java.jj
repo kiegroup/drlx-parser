@@ -3030,14 +3030,14 @@ PointFreeExpr PointFreeExpr():
       { return new PointFreeExpr(range(begin, token()), left, right, operator, arg1, arg2 ); }
 }
 
-Expression TemporalLiteral():
+TemporalLiteralExpr TemporalLiteral():
 {
-	Expression ret;
+	TemporalLiteralExpr ret;
 }
 {
   (
 	  <INTEGER_LITERAL> {
-	  		ret = new IntegerLiteralExpr(tokenRange(), token.image);
+	  		ret = new TemporalLiteralExpr(tokenRange(), token.image);
 	  }
 	|
 	  <MILLISECOND_LITERAL> {

@@ -28,9 +28,15 @@ public class TemporalLiteralExpr extends LiteralExpr {
     private int value;
     private TimeUnit timeUnit;
 
-    public TemporalLiteralExpr( TokenRange tokenRange, String value, TimeUnit timeUnit ) {
+    public TemporalLiteralExpr(TokenRange tokenRange, String value) {
         super(tokenRange);
-        this.value = Integer.parseInt( value.substring( 0, value.length() - (timeUnit == TimeUnit.MILLISECONDS ? 2 : 1) ) );
+        this.value = Integer.parseInt(value);
+        this.timeUnit = TimeUnit.SECONDS;
+    }
+
+    public TemporalLiteralExpr(TokenRange tokenRange, String value, TimeUnit timeUnit) {
+        super(tokenRange);
+        this.value = Integer.parseInt(value.substring(0, value.length() - (timeUnit == TimeUnit.MILLISECONDS ? 2 : 1)));
         this.timeUnit = timeUnit;
     }
 
