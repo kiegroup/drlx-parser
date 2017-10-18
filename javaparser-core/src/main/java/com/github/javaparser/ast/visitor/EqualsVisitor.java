@@ -742,6 +742,8 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Visitable> {
     @Override
     public Boolean visit(final NameExpr n, final Visitable arg) {
         final NameExpr n2 = (NameExpr) arg;
+        if (!objEquals(n.getBackReferencesCount(), n2.getBackReferencesCount()))
+            return false;
         if (!nodeEquals(n.getName(), n2.getName()))
             return false;
         if (!nodeEquals(n.getComment(), n2.getComment()))

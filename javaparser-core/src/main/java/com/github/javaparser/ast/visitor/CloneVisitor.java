@@ -513,7 +513,7 @@ public class CloneVisitor implements GenericVisitor<Visitable, Object> {
     public Visitable visit(final NameExpr n, final Object arg) {
         SimpleName name = cloneNode(n.getName(), arg);
         Comment comment = cloneNode(n.getComment(), arg);
-        NameExpr r = new NameExpr(n.getTokenRange().orElse(null), name);
+        NameExpr r = new NameExpr(n.getTokenRange().orElse(null), name, n.getBackReferencesCount());
         r.setComment(comment);
         return r;
     }

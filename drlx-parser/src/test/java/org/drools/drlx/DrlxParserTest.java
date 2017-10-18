@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.ast.drlx.OOPathChunk;
 import com.github.javaparser.ast.drlx.OOPathExpr;
 import com.github.javaparser.ast.drlx.expr.DrlxExpression;
 import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
@@ -28,6 +29,8 @@ import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
@@ -119,6 +122,21 @@ public class DrlxParserTest {
         assertEquals("$toy", drlx.getBind().asString());
         Expression expression = drlx.getExpr();
         assertTrue(expression instanceof OOPathExpr);
+        assertEquals(expr, toDrlx(drlx));
+    }
+
+    @Test
+    public void testOOPathExprWithBackReference() {
+        String expr = "$toy : /wife/children/toys[name.length == ../../name.length]";
+        DrlxExpression drlx = DrlxParser.parseExpression( expr );
+        assertEquals("$toy", drlx.getBind().asString());
+        Expression expression = drlx.getExpr();
+        assertTrue(expression instanceof OOPathExpr);
+
+        final OOPathChunk secondChunk = ((OOPathExpr) expression).getChunks().get(2);
+        final BinaryExpr secondChunkCondition = (BinaryExpr) secondChunk.getCondition();
+        final NameExpr rightName = (NameExpr) ((FieldAccessExpr)secondChunkCondition.getRight()).getScope();
+        assertEquals(2, rightName.getBackReferencesCount());
         assertEquals(expr, toDrlx(drlx));
     }
 

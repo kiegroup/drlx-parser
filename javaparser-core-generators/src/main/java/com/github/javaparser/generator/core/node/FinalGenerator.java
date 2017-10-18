@@ -1,5 +1,7 @@
 package com.github.javaparser.generator.core.node;
 
+import java.util.Arrays;
+
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.generator.NodeGenerator;
@@ -13,6 +15,7 @@ public class FinalGenerator extends NodeGenerator {
 
     @Override
     protected void generateNode(BaseNodeMetaModel nodeMetaModel, CompilationUnit nodeCu, ClassOrInterfaceDeclaration nodeCoid) {
-        nodeCoid.setFinal(!nodeMetaModel.isAbstract());
+        if(!Arrays.asList("CastExpr", "MethodCallExpr", "FieldAccessExpr").contains(nodeCoid.getName().asString()))
+            nodeCoid.setFinal(!nodeMetaModel.isAbstract());
     }
 }

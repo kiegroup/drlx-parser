@@ -8,5 +8,7 @@ public class NameExprMetaModel extends ExpressionMetaModel {
         super(superBaseNodeMetaModel, com.github.javaparser.ast.expr.NameExpr.class, "NameExpr", "com.github.javaparser.ast.expr", false, false);
     }
 
+    public PropertyMetaModel backReferencesCountPropertyMetaModel;
+
     public PropertyMetaModel namePropertyMetaModel;
 }
