@@ -95,7 +95,7 @@ public class DrlxParserTest {
         String expr = "this after[5,8] $a";
         Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
-        assertEquals("this after[5s,8s] $a", toDrlx(expression)); // please note the parsed expression once normalized would take the time unit for seconds.
+        assertEquals("this after[5ms,8ms] $a", toDrlx(expression)); // please note the parsed expression once normalized would take the time unit for milliseconds.
     }
 
     @Test
