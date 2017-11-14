@@ -164,4 +164,20 @@ public class DrlxParserTest {
         assertEquals(5, chunk1.getValue());
         assertEquals(TimeUnit.SECONDS, chunk1.getTimeUnit());
     }
+
+    @Test
+    public void testInExpression() {
+        String expr = "this in (\"a\", \"b\")";
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
+        assertTrue(expression instanceof PointFreeExpr);
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
+    public void testTemp() {
+        String expr = "java.util.Arrays.asList(\"a\", \"b\").contains(this)";
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
+        assertTrue(expression instanceof PointFreeExpr);
+        assertEquals(expr, toDrlx(expression));
+    }
 }

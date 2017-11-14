@@ -102,7 +102,18 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
             visitor.printer.print("]");
         }
         visitor.printer.print(" ");
-        pointFreeExpr.getRight().accept( visitor, arg );
+        NodeList<Expression> rightExprs = pointFreeExpr.getRight();
+        if (rightExprs.size() == 1) {
+            rightExprs.get(0).accept( visitor, arg );
+        } else {
+            visitor.printer.print("(");
+            rightExprs.get(0).accept( visitor, arg );
+            for (int i = 1; i < rightExprs.size(); i++) {
+                visitor.printer.print(", ");
+                rightExprs.get(i).accept( visitor, arg );
+            }
+            visitor.printer.print(")");
+        }
     }
 
     @Override

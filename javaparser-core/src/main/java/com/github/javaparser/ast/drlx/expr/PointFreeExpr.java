@@ -17,6 +17,7 @@
 package com.github.javaparser.ast.drlx.expr;
 
 import com.github.javaparser.TokenRange;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.visitor.GenericVisitor;
@@ -24,14 +25,14 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 
 public class PointFreeExpr extends Expression {
 
-    private Expression left;
-    private Expression right;
+    private final Expression left;
+    private final NodeList<Expression> right;
 
-    private SimpleName operator;
-    private Expression arg1;
-    private Expression arg2;
+    private final SimpleName operator;
+    private final Expression arg1;
+    private final Expression arg2;
 
-    public PointFreeExpr( TokenRange tokenRange, Expression left, Expression right, SimpleName operator, Expression arg1, Expression arg2 ) {
+    public PointFreeExpr( TokenRange tokenRange, Expression left, NodeList<Expression> right, SimpleName operator, Expression arg1, Expression arg2 ) {
         super(tokenRange);
         this.left = left;
         this.right = right;
@@ -54,7 +55,7 @@ public class PointFreeExpr extends Expression {
         return left;
     }
 
-    public Expression getRight() {
+    public NodeList<Expression> getRight() {
         return right;
     }
 

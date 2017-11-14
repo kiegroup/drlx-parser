@@ -2879,6 +2879,16 @@ TOKEN :
   < HOUR_LITERAL: <DECIMAL_LITERAL> "h" >
 }
 
+NodeList<Expression> Expressions():
+{
+	NodeList<Expression> ret = emptyList();
+	Expression expr;
+}
+{
+  "(" [ expr = Expression() { ret = add(ret, expr); } ( "," expr = Expression() { ret = add(ret, expr); } )* ] ")"
+  { return ret; }
+}
+
 RuleDeclaration RuleDeclaration(ModifierHolder modifier):
 {
     SimpleName name;
@@ -3017,10 +3027,11 @@ PointFreeExpr PointFreeExpr():
 {
     JavaToken begin;
     Expression left;
-    Expression right;
+    NodeList<Expression> right = emptyList();
     SimpleName operator;
     Expression arg1 = null;
     Expression arg2 = null;
+    Expression tempExpr;
 }
 {
     left = Expression() { begin=token(); }
@@ -3031,8 +3042,12 @@ PointFreeExpr PointFreeExpr():
       |
       ( "[" arg1 = TemporalLiteral() "]" )
     ]
-    right = Expression()
-
+    (
+      LOOKAHEAD(1)
+      ( right = Expressions())
+      |
+      ( tempExpr = Expression() { right = add(right, tempExpr); } )
+    )
       { return new PointFreeExpr(range(begin, token()), left, right, operator, arg1, arg2 ); }
 }
 
