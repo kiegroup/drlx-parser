@@ -172,12 +172,4 @@ public class DrlxParserTest {
         assertTrue(expression instanceof PointFreeExpr);
         assertEquals(expr, toDrlx(expression));
     }
-
-    @Test
-    public void testTemp() {
-        String expr = "java.util.Arrays.asList(\"a\", \"b\").contains(this)";
-        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
-        assertTrue(expression instanceof PointFreeExpr);
-        assertEquals(expr, toDrlx(expression));
-    }
 }
