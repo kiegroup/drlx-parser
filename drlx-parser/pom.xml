@@ -54,7 +54,7 @@
                 <configuration>
                     <relocations>
                         <relocation>
-                            <pattern>org.drools.com.github.javaparser</pattern>
+                            <pattern>com.github.javaparser</pattern>
                             <shadedPattern>org.drools.javaparser</shadedPattern>
                         </relocation>
                     </relocations>
