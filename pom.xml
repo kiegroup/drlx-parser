@@ -136,6 +136,7 @@
         <maven-coveralls-plugin.version>4.3.0</maven-coveralls-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
         <bnd-maven-plugin.version>3.4.0</bnd-maven-plugin.version>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <scm>

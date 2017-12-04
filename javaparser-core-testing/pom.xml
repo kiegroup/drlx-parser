@@ -23,6 +23,11 @@
         </license>
     </licenses>
 
+    <properties>
+        <junit.version>4.12</junit.version>
+        <jbehave.version>4.1</jbehave.version>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
     <build>
         <plugins>
             <plugin>

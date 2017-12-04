@@ -10,6 +10,10 @@
     <artifactId>javaparser-core-generators</artifactId>
     <description>A code generator framework, and the generators for javaparser-core</description>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>org.drools.javaparser</groupId>
