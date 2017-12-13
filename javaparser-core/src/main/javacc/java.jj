@@ -3092,7 +3092,12 @@ TemporalLiteralChunkExpr TemporalLiteralChunk():
 	  }
 	|
 	  <FLOATING_POINT_LITERAL> {
-	  		ret = new TemporalLiteralChunkExpr(tokenRange(), token.image, TimeUnit.DAYS);
+	        if (token.image.endsWith("f") || token.image.endsWith("F") || token.image.endsWith("D")) {
+	            addProblem("unexpected float");
+	            ret = null;
+	        } else {
+	  		    ret = new TemporalLiteralChunkExpr(tokenRange(), token.image, TimeUnit.DAYS);
+	  	    }
 	  }
   )
   { return ret; }

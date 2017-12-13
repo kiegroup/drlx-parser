@@ -106,6 +106,12 @@ public class DrlxParserTest {
         assertEquals(expr, toDrlx(expression));
     }
 
+    @Test(expected = ParseProblemException.class)
+    public void testInvalidTemporalArgs() {
+        String expr = "this after[5ms,8f] $a";
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
+    }
+
     @Test
     public void testOOPathExpr() {
         String expr = "/wife/children[age > 10]/toys";
