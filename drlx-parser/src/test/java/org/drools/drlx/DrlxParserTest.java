@@ -30,7 +30,9 @@ import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.HalfBinaryExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
@@ -177,5 +179,116 @@ public class DrlxParserTest {
         Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
         assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
+    /* This shouldn't be supported, an HalfBinaryExpr should be valid only after a && or a || */
+    public void testUnsupportedImplicitParameter() {
+        String expr = "== \"Mark\"";
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
+        assertTrue(expression instanceof HalfBinaryExpr);
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test(expected = ParseProblemException.class)
+    public void testUnsupportedImplicitParameterWithJavaParser() {
+        String expr = "== \"Mark\"";
+        JavaParser.parseExpression( expr );
+    }
+
+    @Test
+    public void testOrWithImplicitParameter() {
+        String expr = "name == \"Mark\" || == \"Mario\" || == \"Luca\"";
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
+        System.out.println(expression);
+
+        BinaryExpr comboExpr = ( (BinaryExpr) expression );
+        assertEquals(Operator.OR, comboExpr.getOperator());
+
+        BinaryExpr first = ((BinaryExpr)((BinaryExpr) comboExpr.getLeft()).getLeft());
+        assertEquals("name", first.getLeft().toString());
+        assertEquals("\"Mark\"", first.getRight().toString());
+        assertEquals(Operator.EQUALS, first.getOperator());
+
+        HalfBinaryExpr second = (HalfBinaryExpr) ((BinaryExpr) comboExpr.getLeft()).getRight();
+        assertEquals("\"Mario\"", second.getRight().toString());
+        assertEquals(HalfBinaryExpr.Operator.EQUALS, second.getOperator());
+
+        HalfBinaryExpr third = (HalfBinaryExpr) comboExpr.getRight();
+        assertEquals("\"Luca\"", third.getRight().toString());
+        assertEquals(HalfBinaryExpr.Operator.EQUALS, third.getOperator());
+    }
+
+    @Test
+    public void testAndWithImplicitParameter() {
+        String expr = "name == \"Mark\" && == \"Mario\" && == \"Luca\"";
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
+        System.out.println(expression);
+
+        BinaryExpr comboExpr = ( (BinaryExpr) expression );
+        assertEquals(Operator.AND, comboExpr.getOperator());
+
+        BinaryExpr first = ((BinaryExpr)((BinaryExpr) comboExpr.getLeft()).getLeft());
+        assertEquals("name", first.getLeft().toString());
+        assertEquals("\"Mark\"", first.getRight().toString());
+        assertEquals(Operator.EQUALS, first.getOperator());
+
+        HalfBinaryExpr second = (HalfBinaryExpr) ((BinaryExpr) comboExpr.getLeft()).getRight();
+        assertEquals("\"Mario\"", second.getRight().toString());
+        assertEquals(HalfBinaryExpr.Operator.EQUALS, second.getOperator());
+
+        HalfBinaryExpr third = (HalfBinaryExpr) comboExpr.getRight();
+        assertEquals("\"Luca\"", third.getRight().toString());
+        assertEquals(HalfBinaryExpr.Operator.EQUALS, third.getOperator());
+    }
+
+    @Test
+    public void testAndWithImplicitParameter2() {
+        String expr = "name == \"Mark\" && == \"Mario\" || == \"Luca\"";
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
+        System.out.println(expression);
+
+        BinaryExpr comboExpr = ( (BinaryExpr) expression );
+        assertEquals(Operator.OR, comboExpr.getOperator());
+        assertEquals(Operator.AND, ((BinaryExpr)(comboExpr.getLeft())).getOperator());
+
+        BinaryExpr first = ((BinaryExpr)((BinaryExpr) comboExpr.getLeft()).getLeft());
+        assertEquals("name", first.getLeft().toString());
+        assertEquals("\"Mark\"", first.getRight().toString());
+        assertEquals(Operator.EQUALS, first.getOperator());
+
+        HalfBinaryExpr second = (HalfBinaryExpr) ((BinaryExpr) comboExpr.getLeft()).getRight();
+        assertEquals("\"Mario\"", second.getRight().toString());
+        assertEquals(HalfBinaryExpr.Operator.EQUALS, second.getOperator());
+
+        HalfBinaryExpr third = (HalfBinaryExpr) comboExpr.getRight();
+        assertEquals("\"Luca\"", third.getRight().toString());
+        assertEquals(HalfBinaryExpr.Operator.EQUALS, third.getOperator());
+    }
+
+    @Test
+    public void regressionTestImplicitOperator() {
+        String expr =
+        "{ " +
+        "   for (i = 0; i < 10 && i < 2; i++) {\n" +
+        "            break;\n" +
+        "   }\n" +
+        "}";
+        BlockStmt expression = JavaParser.parseBlock(expr );
+        System.out.println(expression);
+    }
+
+    @Test
+    public void regressionTestImplicitOperator2() {
+        String expr = "i < 10 && i < 2";
+        Expression expression = JavaParser.parseExpression(expr );
+        System.out.println(expression);
+    }
+
+    @Test
+    public void regressionTestImplicitOperator3() {
+        String expr = "i == 10 && i == 2";
+        Expression expression = JavaParser.parseExpression(expr );
+        System.out.println(expression);
     }
 }

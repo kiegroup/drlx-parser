@@ -219,6 +219,8 @@ public interface VoidVisitor<A> {
 
     void visit(ReceiverParameter n, A arg);
 
+    void visit(HalfBinaryExpr n, A arg);
+
     VoidRuleVisitor DUMMY_RULE_VISITOR = new VoidRuleVisitor() {
     };
 
