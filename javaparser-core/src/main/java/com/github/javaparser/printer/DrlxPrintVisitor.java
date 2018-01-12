@@ -40,7 +40,7 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
 
     @Override
     public void visit( RuleDeclaration n, Void arg ) {
-        visitor.printJavaComment(n.getComment(), arg);
+        visitor.printComment(n.getComment(), arg);
 
         for (AnnotationExpr ae : n.getAnnotations()) {
             ae.accept(visitor, arg);
@@ -60,7 +60,7 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
 
     @Override
     public void visit( InlineCastExpr inlineCastExpr, Void arg ) {
-        visitor.printJavaComment(inlineCastExpr.getComment(), arg);
+        visitor.printComment(inlineCastExpr.getComment(), arg);
         inlineCastExpr.getExpression().accept( visitor, arg );
         visitor.printer.print( "#" );
         inlineCastExpr.getType().accept( visitor, arg );
@@ -68,7 +68,7 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
 
     @Override
     public void visit( NullSafeFieldAccessExpr nullSafeFieldAccessExpr, Void arg ) {
-        visitor.printJavaComment(nullSafeFieldAccessExpr.getComment(), arg);
+        visitor.printComment(nullSafeFieldAccessExpr.getComment(), arg);
         nullSafeFieldAccessExpr.getScope().accept( visitor, arg );
         visitor.printer.print( "!." );
         nullSafeFieldAccessExpr.getName().accept( visitor, arg );
@@ -76,7 +76,7 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
 
     @Override
     public void visit( NullSafeMethodCallExpr nullSafeMethodCallExpr, Void arg ) {
-        visitor.printJavaComment(nullSafeMethodCallExpr.getComment(), arg);
+        visitor.printComment(nullSafeMethodCallExpr.getComment(), arg);
         if (nullSafeMethodCallExpr.getScope().isPresent()) {
             nullSafeMethodCallExpr.getScope().get().accept( visitor, arg );
             visitor.printer.print("!.");
@@ -88,7 +88,7 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
 
     @Override
     public void visit( PointFreeExpr pointFreeExpr, Void arg ) {
-        visitor.printJavaComment(pointFreeExpr.getComment(), arg);
+        visitor.printComment(pointFreeExpr.getComment(), arg);
         pointFreeExpr.getLeft().accept( visitor, arg );
         visitor.printer.print(" ");
         pointFreeExpr.getOperator().accept( visitor, arg );
@@ -118,7 +118,7 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
 
     @Override
     public void visit(TemporalLiteralExpr temporalLiteralExpr, Void arg) {
-        visitor.printJavaComment(temporalLiteralExpr.getComment(), arg);
+        visitor.printComment(temporalLiteralExpr.getComment(), arg);
         NodeList<TemporalLiteralChunkExpr> chunks = temporalLiteralExpr.getChunks();
         for (TemporalLiteralChunkExpr c : chunks) {
             c.accept(visitor, arg);
@@ -127,7 +127,7 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
 
     @Override
     public void visit(TemporalLiteralChunkExpr temporalLiteralExpr, Void arg) {
-        visitor.printJavaComment(temporalLiteralExpr.getComment(), arg);
+        visitor.printComment(temporalLiteralExpr.getComment(), arg);
         visitor.printer.print("" + temporalLiteralExpr.getValue());
         switch (temporalLiteralExpr.getTimeUnit()) {
             case MILLISECONDS:
@@ -159,7 +159,7 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
 
     @Override
     public void visit(OOPathExpr pointFreeExpr, Void arg ) {
-        visitor.printJavaComment(pointFreeExpr.getComment(), arg);
+        visitor.printComment(pointFreeExpr.getComment(), arg);
         visitor.printer.print("/");
         NodeList<OOPathChunk> chunks = pointFreeExpr.getChunks();
         for (int i = 0; i <  chunks.size(); i++) {

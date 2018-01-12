@@ -49,17 +49,34 @@ public final class NameExpr extends Expression implements NodeWithSimpleName<Nam
 
     private SimpleName name;
 
+    private int backReferencesCount = 0;
+
     public NameExpr() {
-        this(null, new SimpleName());
+        this(null, new SimpleName(), 0);
     }
 
     public NameExpr(final String name) {
-        this(null, new SimpleName(name));
+        this(null, new SimpleName(name), 0);
+    }
+
+    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    public int getBackReferencesCount() {
+        return backReferencesCount;
+    }
+
+    @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")
+    public NameExpr setBackReferencesCount(final int backReferencesCount) {
+        if (backReferencesCount == this.backReferencesCount) {
+            return (NameExpr) this;
+        }
+        notifyPropertyChange(ObservableProperty.BACK_REFERENCES_COUNT, this.backReferencesCount, backReferencesCount);
+        this.backReferencesCount = backReferencesCount;
+        return this;
     }
 
     @AllFieldsConstructor
-    public NameExpr(final SimpleName name) {
-        this(name.getTokenRange().orElse(null), name);
+    public NameExpr(final SimpleName name, int backReferencesCount) {
+        this(name.getTokenRange().orElse(null), name, backReferencesCount);
         setRange(name.getRange().orElse(null));
     }
 
@@ -67,10 +84,11 @@ public final class NameExpr extends Expression implements NodeWithSimpleName<Nam
      * This constructor is used by the parser and is considered private.
      */
     @Generated("com.github.javaparser.generator.core.node.MainConstructorGenerator")
-    public NameExpr(TokenRange tokenRange, SimpleName name) {
+    public NameExpr(TokenRange tokenRange, SimpleName name, int backReferencesCount) {
         super(tokenRange);
         setName(name);
         customInitialization();
+        this.backReferencesCount = backReferencesCount;
     }
 
     @Override

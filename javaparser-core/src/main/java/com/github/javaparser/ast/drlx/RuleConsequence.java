@@ -16,7 +16,7 @@
 
 package com.github.javaparser.ast.drlx;
 
-import com.github.javaparser.Range;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
@@ -25,7 +25,7 @@ public class RuleConsequence extends RuleItem {
 
     private final BlockStmt block;
 
-    public RuleConsequence( Range range, BlockStmt block ) {
+    public RuleConsequence(TokenRange range, BlockStmt block ) {
         super( range );
         this.block = block;
     }

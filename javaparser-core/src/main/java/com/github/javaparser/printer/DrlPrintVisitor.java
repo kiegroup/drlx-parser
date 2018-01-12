@@ -37,7 +37,7 @@ public class DrlPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintVi
 
     @Override
     public void visit( RuleDeclaration rule, Void arg ) {
-        visitor.printJavaComment(rule.getComment(), arg);
+        visitor.printComment(rule.getComment(), arg);
 
         for (AnnotationExpr ae : rule.getAnnotations()) {
             ae.accept(visitor, arg);

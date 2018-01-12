@@ -16,7 +16,7 @@
 
 package com.github.javaparser.ast.drlx.expr;
 
-import com.github.javaparser.Range;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.expr.CastExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.type.Type;
@@ -25,8 +25,8 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 
 public class InlineCastExpr extends CastExpr {
 
-    public InlineCastExpr( Range range, Type type, Expression expression ) {
-        super( range, type, expression );
+    public InlineCastExpr(TokenRange tokenRange, Type type, Expression expression ) {
+        super( tokenRange, type, expression );
     }
 
     @Override

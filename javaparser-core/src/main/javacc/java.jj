@@ -2920,7 +2920,7 @@ NodeList<Expression> Expressions():
 RuleDeclaration RuleDeclaration(ModifierHolder modifier):
 {
     SimpleName name;
-    Position begin = modifier.begin;
+    JavaToken begin = modifier.begin;
     RuleBody body;
 }
 {
@@ -2928,20 +2928,20 @@ RuleDeclaration RuleDeclaration(ModifierHolder modifier):
   name = SimpleName()
   body = RuleBody()
 
-	{ return new RuleDeclaration(range(begin, tokenEnd()), modifier.annotations, name, body); }
+	{ return new RuleDeclaration(range(begin, token()), modifier.annotations, name, body); }
 }
 
 RuleBody RuleBody():
 {
     NodeList<RuleItem> items = emptyList();
-    Position begin;
+    JavaToken begin;
 }
 {
-  "{" { begin=tokenBegin(); }
+  "{" { begin=token(); }
   items = RuleItems()
   "}"
 
-    { return new RuleBody(range(begin, tokenEnd()), items); }
+    { return new RuleBody(range(begin, token()), items); }
 }
 
 NodeList<RuleItem> RuleItems():
@@ -2962,73 +2962,60 @@ NodeList<RuleItem> RuleItems():
 
 RulePattern RulePattern():
 {
-    Position begin;
+    JavaToken begin;
     SimpleName type;
     SimpleName bind;
     OOPathExpr expr;
 }
 {
-  type = SimpleName() { begin=tokenBegin(); }
+  type = SimpleName() { begin=token(); }
   bind = SimpleName()
   "="
   expr = OOPathExpr()
   ";"
 
-    { return new RulePattern(range(begin, tokenEnd()), type, bind, expr); }
+    { return new RulePattern(range(begin, token()), type, bind, expr); }
 }
 
 RuleConsequence RuleConsequence():
 {
-    Position begin;
+    JavaToken begin;
     BlockStmt block;
 }
 {
-  "do" { begin=tokenBegin(); }
+  "do" { begin=token(); }
   block = Block()
 
-    { return new RuleConsequence(range(begin, tokenEnd()), block); }
+    { return new RuleConsequence(range(begin, token()), block); }
 }
 
 OOPathExpr OOPathExpr():
 {
-    Position begin;
+    JavaToken begin;
     NodeList<OOPathChunk> chunks = emptyList();
     OOPathChunk chunk;
 }
 {
-  "/" { begin=tokenBegin(); }
+  "/" { begin=token(); }
   chunk = OOPathChunk() { chunks.add(chunk); }
   ( "/" chunk = OOPathChunk() { chunks.add(chunk); } )*
 
-    { return new OOPathExpr(range(begin, tokenEnd()), chunks); }
+    { return new OOPathExpr(range(begin, token()), chunks); }
 }
 
 OOPathChunk OOPathChunk():
 {
-    Position begin;
+    JavaToken begin;
     SimpleName field;
     SimpleName inlineCast = null;
     Expression condition = null;
 }
 {
-  field = SimpleName() { begin=tokenBegin(); }
+  field = SimpleName() { begin=token(); }
   [ "#" inlineCast = SimpleName() ]
   [ "[" condition = Expression() "]" ]
 
-    { return new OOPathChunk(range(begin, tokenEnd()), field, inlineCast, condition); }
-}TypeDeclaration<?> TypeDeclarationParseStart():
-{
-	TypeDeclaration<?> ret;
-	ModifierHolder modifier;
-}
-{
-	modifier = Modifiers()
-	(ret = ClassOrInterfaceDeclaration(modifier)
-	|ret = EnumDeclaration(modifier)
-	|ret = AnnotationTypeDeclaration(modifier)
-	)
-	<EOF>
-	{return ret;}
+    { return new OOPathChunk(range(begin, token()), field, inlineCast, condition); }
 }
 
 DrlxExpression DrlxExpression():

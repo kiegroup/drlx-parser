@@ -80,6 +80,8 @@ public class TokenTypes {
      */
     public static JavaToken.Category getCategory(int kind) {
         switch (kind) {
+            case RULE:
+                return JavaToken.Category.KEYWORD;
             case WINDOWS_EOL:
             case UNIX_EOL:
             case OLD_MAC_EOL:
@@ -169,6 +171,10 @@ public class TokenTypes {
             case HEXADECIMAL_EXPONENT:
             case CHARACTER_LITERAL:
             case STRING_LITERAL:
+            case MILLISECOND_LITERAL:
+            case SECOND_LITERAL:
+            case MINUTE_LITERAL:
+            case HOUR_LITERAL:
                 return JavaToken.Category.LITERAL;
             case IDENTIFIER:
                 return JavaToken.Category.IDENTIFIER;
@@ -224,6 +230,11 @@ public class TokenTypes {
             case RSIGNEDSHIFT:
             case GT:
                 return JavaToken.Category.OPERATOR;
+            // These are DRLX tokens, They don't have the constants generated
+            case 144:
+            case 145:
+            case 146:
+                return JavaToken.Category.DRLX;
             // The following are tokens that are only used internally by the lexer
             case ENTER_JAVADOC_COMMENT:
             case ENTER_MULTILINE_COMMENT:

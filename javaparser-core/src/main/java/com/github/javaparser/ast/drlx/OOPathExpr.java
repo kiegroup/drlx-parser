@@ -16,7 +16,7 @@
 
 package com.github.javaparser.ast.drlx;
 
-import com.github.javaparser.Range;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.visitor.GenericVisitor;
@@ -26,7 +26,7 @@ public class OOPathExpr extends Expression {
 
     private final NodeList<OOPathChunk> chunks;
 
-    public OOPathExpr( Range range, NodeList<OOPathChunk> chunks ) {
+    public OOPathExpr( TokenRange range, NodeList<OOPathChunk> chunks ) {
         super( range );
         this.chunks = chunks;
     }

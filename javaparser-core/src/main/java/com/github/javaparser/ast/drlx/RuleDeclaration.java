@@ -19,6 +19,7 @@ package com.github.javaparser.ast.drlx;
 import java.util.EnumSet;
 
 import com.github.javaparser.Range;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -31,8 +32,8 @@ public class RuleDeclaration extends TypeDeclaration<RuleDeclaration> {
 
     private final RuleBody ruleBody;
 
-    public RuleDeclaration( Range range, NodeList<AnnotationExpr> annotations, SimpleName name, RuleBody ruleBody ) {
-        super( range, annotations, EnumSet.noneOf(Modifier.class), name, new NodeList<>() );
+    public RuleDeclaration(TokenRange range, NodeList<AnnotationExpr> annotations, SimpleName name, RuleBody ruleBody ) {
+        super( range, EnumSet.noneOf(Modifier.class), annotations, name, new NodeList<>() );
         this.ruleBody = ruleBody;
     }
 
