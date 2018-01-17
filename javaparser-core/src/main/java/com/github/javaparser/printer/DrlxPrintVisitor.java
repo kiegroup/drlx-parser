@@ -90,6 +90,9 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
     public void visit( PointFreeExpr pointFreeExpr, Void arg ) {
         visitor.printComment(pointFreeExpr.getComment(), arg);
         pointFreeExpr.getLeft().accept( visitor, arg );
+        if(pointFreeExpr.isNegated()) {
+            visitor.printer.print(" not");
+        }
         visitor.printer.print(" ");
         pointFreeExpr.getOperator().accept( visitor, arg );
         if (pointFreeExpr.getArg1() != null) {

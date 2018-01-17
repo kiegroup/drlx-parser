@@ -37,6 +37,7 @@ import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -97,7 +98,18 @@ public class DrlxParserTest {
         String expr = "this after[5,8] $a";
         Expression expression = DrlxParser.parseExpression( expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
+        assertFalse(((PointFreeExpr)expression).isNegated());
         assertEquals("this after[5ms,8ms] $a", toDrlx(expression)); // please note the parsed expression once normalized would take the time unit for milliseconds.
+    }
+
+
+    @Test
+    public void testDotFreeExprWithArgsNegated() {
+        String expr = "this not after[5,8] $a";
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
+        assertTrue(expression instanceof PointFreeExpr);
+        assertTrue(((PointFreeExpr)expression).isNegated());
+        assertEquals("this not after[5ms,8ms] $a", toDrlx(expression)); // please note the parsed expression once normalized would take the time unit for milliseconds.
     }
 
     @Test

@@ -3044,12 +3044,17 @@ PointFreeExpr PointFreeExpr():
     Expression left;
     NodeList<Expression> right = emptyList();
     SimpleName operator;
+    boolean negated = false;
     Expression arg1 = null;
     Expression arg2 = null;
     Expression tempExpr;
 }
 {
     left = Expression() { begin=token(); }
+    (
+                  " not"
+                  { negated = true; }
+    )*
     operator = SimpleName()
     [
       LOOKAHEAD("[" TemporalLiteral() ",")
@@ -3063,7 +3068,7 @@ PointFreeExpr PointFreeExpr():
       |
       ( tempExpr = Expression() { right = add(right, tempExpr); } )
     )
-      { return new PointFreeExpr(range(begin, token()), left, right, operator, arg1, arg2 ); }
+      { return new PointFreeExpr(range(begin, token()), left, right, operator, negated, arg1, arg2 ); }
 }
 
 TemporalLiteralExpr TemporalLiteral():
