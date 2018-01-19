@@ -23,6 +23,8 @@ import com.github.javaparser.ast.drlx.RuleConsequence;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
 import com.github.javaparser.ast.drlx.RulePattern;
 import com.github.javaparser.ast.drlx.expr.DrlxExpression;
+import com.github.javaparser.ast.drlx.expr.HalfBinaryExpr;
+import com.github.javaparser.ast.drlx.expr.HalfPointFreeExpr;
 import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
 import com.github.javaparser.ast.drlx.expr.NullSafeFieldAccessExpr;
 import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
@@ -57,4 +59,9 @@ public interface VoidRuleVisitor<A> {
     default void visit( TemporalLiteralExpr temporalLiteralExpr, A arg ) { }
 
     default void visit(TemporalLiteralChunkExpr temporalLiteralChunkExpr, A arg) {}
+
+    default void visit(HalfBinaryExpr n, A arg) {}
+
+    default void visit(HalfPointFreeExpr n, A arg) {}
+
 }

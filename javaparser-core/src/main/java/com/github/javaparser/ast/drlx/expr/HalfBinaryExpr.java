@@ -91,7 +91,7 @@ public final class HalfBinaryExpr extends Expression {
 
     @Override
     public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
+        v.getRuleVisitor().visit(this, arg);
     }
 
     @Generated("com.github.javaparser.generator.core.node.PropertyGenerator")

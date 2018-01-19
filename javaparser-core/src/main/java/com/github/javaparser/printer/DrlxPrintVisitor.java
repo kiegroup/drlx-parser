@@ -22,6 +22,7 @@ import com.github.javaparser.ast.drlx.OOPathExpr;
 import com.github.javaparser.ast.drlx.RuleBody;
 import com.github.javaparser.ast.drlx.RuleDeclaration;
 import com.github.javaparser.ast.drlx.expr.DrlxExpression;
+import com.github.javaparser.ast.drlx.expr.HalfBinaryExpr;
 import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
 import com.github.javaparser.ast.drlx.expr.NullSafeFieldAccessExpr;
 import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
@@ -178,5 +179,13 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
                 visitor.printer.print("/");
             }
         }
+    }
+
+    @Override
+    public void visit(HalfBinaryExpr n, Void arg) {
+        visitor.printComment(n.getComment(), arg);
+        visitor.printer.print(n.getOperator().asString());
+        visitor.printer.print(" ");
+        n.getRight().accept(visitor, arg);
     }
 }
