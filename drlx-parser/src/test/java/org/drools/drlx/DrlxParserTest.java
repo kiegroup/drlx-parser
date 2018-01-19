@@ -30,9 +30,10 @@ import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
-import com.github.javaparser.ast.expr.HalfBinaryExpr;
+import com.github.javaparser.ast.drlx.expr.HalfBinaryExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
@@ -302,5 +303,26 @@ public class DrlxParserTest {
         String expr = "i == 10 && i == 2";
         Expression expression = JavaParser.parseExpression(expr );
         System.out.println(expression);
+    }
+
+    @Test
+    public void dotFreeWithRegexp() {
+        String expr = "name matches \"[a-z]*\"";
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
+        assertTrue(expression instanceof PointFreeExpr);
+        assertEquals("name matches \"[a-z]*\"", toDrlx(expression));
+        PointFreeExpr e = (PointFreeExpr)expression;
+        assertEquals("matches", e.getOperator().asString());
+        assertEquals("name", e.getLeft().toString());
+        assertEquals("\"[a-z]*\"", e.getRight().get(0).toString());
+    }
+
+    @Test
+    @Ignore
+    public void implicitOperatorWithRegexps() {
+        String expr = "name matches \"[a-z]*\" || matches \"pippo\"";
+        Expression expression = DrlxParser.parseExpression(expr).getExpr();
+        assertEquals("name matches \"[a-z]*\" || matches \"[A-Z]*\"", toDrlx(expression));
+
     }
 }
