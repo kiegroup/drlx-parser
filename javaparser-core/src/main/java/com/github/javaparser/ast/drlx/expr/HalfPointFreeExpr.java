@@ -25,19 +25,19 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 
 public class HalfPointFreeExpr extends Expression {
 
-    private final Expression left;
     private final NodeList<Expression> right;
 
     private final SimpleName operator;
     private boolean negated;
+    private final Expression arg1;
     private final Expression arg2;
 
-    public HalfPointFreeExpr(TokenRange tokenRange, Expression left, NodeList<Expression> right, SimpleName operator, Boolean negated, Expression arg1, Expression arg2 ) {
+    public HalfPointFreeExpr(TokenRange tokenRange, NodeList<Expression> right, SimpleName operator, Boolean negated, Expression arg1, Expression arg2 ) {
         super(tokenRange);
-        this.left = left;
         this.right = right;
         this.operator = operator;
         this.negated = negated;
+        this.arg1 = arg1;
         this.arg2 = arg2;
     }
 
@@ -51,10 +51,6 @@ public class HalfPointFreeExpr extends Expression {
         v.getRuleVisitor().visit( this, arg );
     }
 
-    public Expression getLeft() {
-        return left;
-    }
-
     public NodeList<Expression> getRight() {
         return right;
     }
@@ -65,6 +61,10 @@ public class HalfPointFreeExpr extends Expression {
 
     public boolean isNegated() {
         return negated;
+    }
+
+    public Expression getArg1() {
+        return arg1;
     }
 
     public Expression getArg2() {

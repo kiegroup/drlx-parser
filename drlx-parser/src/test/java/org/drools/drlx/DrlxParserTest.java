@@ -95,6 +95,14 @@ public class DrlxParserTest {
     }
 
     @Test
+    public void testDotFreeExprWithOr() {
+        String expr = "this after $a || this after $b";
+        Expression expression = DrlxParser.parseExpression( expr ).getExpr();
+        assertTrue(expression instanceof BinaryExpr);
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
     public void testDotFreeExprWithArgs() {
         String expr = "this after[5,8] $a";
         Expression expression = DrlxParser.parseExpression( expr ).getExpr();
@@ -318,11 +326,25 @@ public class DrlxParserTest {
     }
 
     @Test
-    @Ignore
     public void implicitOperatorWithRegexps() {
         String expr = "name matches \"[a-z]*\" || matches \"pippo\"";
         Expression expression = DrlxParser.parseExpression(expr).getExpr();
-        assertEquals("name matches \"[a-z]*\" || matches \"[A-Z]*\"", toDrlx(expression));
+        assertEquals("name matches \"[a-z]*\" || matches \"pippo\"", toDrlx(expression));
+    }
+
+    @Test
+    public void halfPointFreeExpr() {
+        String expr = "matches \"[A-Z]*\"";
+        Expression expression = DrlxParser.parseExpression(expr).getExpr();
+        assertEquals("matches \"[A-Z]*\"", toDrlx(expression));
+
+    }
+
+    @Test
+    public void halfPointFreeExprNegated() {
+        String expr = "not matches \"[A-Z]*\"";
+        Expression expression = DrlxParser.parseExpression(expr).getExpr();
+        assertEquals("not matches \"[A-Z]*\"", toDrlx(expression));
 
     }
 }
