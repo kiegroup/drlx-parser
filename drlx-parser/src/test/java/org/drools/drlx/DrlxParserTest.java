@@ -31,14 +31,16 @@ import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.drlx.expr.HalfBinaryExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -346,5 +348,13 @@ public class DrlxParserTest {
         Expression expression = DrlxParser.parseExpression(expr).getExpr();
         assertEquals("not matches \"[A-Z]*\"", toDrlx(expression));
 
+    }
+
+    @Test
+    public void regressionTestHalfPointFree() {
+        assertThat(DrlxParser.parseExpression("getAddress().getAddressName().length() == 5").getExpr(), instanceOf(BinaryExpr.class));
+        assertThat(DrlxParser.parseExpression("isFortyYearsOld(this, true)").getExpr(), instanceOf(MethodCallExpr.class));
+        assertThat(DrlxParser.parseExpression("getName().startsWith(\"M\")").getExpr(), instanceOf(MethodCallExpr.class));
+        assertThat(DrlxParser.parseExpression("isPositive($i.intValue())").getExpr(), instanceOf(MethodCallExpr.class));
     }
 }
