@@ -16,6 +16,7 @@
 
 package org.drools.drlx;
 
+import java.awt.Point;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -372,5 +373,6 @@ public class DrlxParserTest {
         assertThat(DrlxParser.parseExpression(parser, "isFortyYearsOld(this, true)").getExpr(), instanceOf(MethodCallExpr.class));
         assertThat(DrlxParser.parseExpression(parser, "getName().startsWith(\"M\")").getExpr(), instanceOf(MethodCallExpr.class));
         assertThat(DrlxParser.parseExpression(parser, "isPositive($i.intValue())").getExpr(), instanceOf(MethodCallExpr.class));
+        assertThat(DrlxParser.parseExpression(parser, "someEntity.someString in (\"1.500\")").getExpr(), instanceOf(PointFreeExpr.class));
     }
 }

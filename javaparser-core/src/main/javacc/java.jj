@@ -3083,7 +3083,7 @@ Expression PointFreeExpr():
 {
     (
         (
-            left = PrimaryPrefix() { begin=token(); }
+            left = PrimaryExpression() { begin=token(); }
             (
                           <NOT_WITH_SPACE>
                           { negated = true; }
@@ -3101,7 +3101,7 @@ Expression PointFreeExpr():
                   LOOKAHEAD(1)
                   ( right = Expressions())
                   |
-                  ( tempExpr = PrimaryPrefix() { right = add(right, tempExpr); } )
+                  ( tempExpr = PrimaryExpression() { right = add(right, tempExpr); } )
                 )
                   {
                     return new PointFreeExpr(range(begin, token()), left, right, operator, negated, arg1, arg2 );
