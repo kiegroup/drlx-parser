@@ -16,6 +16,9 @@
 
 package org.drools.drlx;
 
+import java.util.Collection;
+import java.util.function.Function;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ParseResult;
@@ -29,8 +32,9 @@ import static com.github.javaparser.Providers.provider;
 
 public class DrlxParser {
 
-    private static final ParseStart<DrlxExpression> DRLX_EXPRESSION = parser -> {
+    private static final Function<Collection<String>,  ParseStart<DrlxExpression>> DRLX_EXPRESSION = (operators) -> parser -> {
         parser.setDrlParsing(true);
+        parser.setPointFreeOperators(operators);
         try {
             return parser.DrlxExpression();
         } finally {
@@ -42,8 +46,12 @@ public class DrlxParser {
         return parser.TemporalLiteral();
     };
 
-    public static <T extends DrlxExpression> T parseExpression(final String expression) {
-        return (T) simplifiedParse(DRLX_EXPRESSION, provider(expression));
+    public static final ParseStart<DrlxExpression> buildDrlxParserWithArguments(Collection<String> operators) {
+        return DRLX_EXPRESSION.apply(operators);
+    }
+
+    public static <T extends DrlxExpression> T parseExpression(ParseStart<DrlxExpression> parser, final String expression) {
+        return (T) simplifiedParse(parser, provider(expression));
     }
 
     private static <T extends Node> T simplifiedParse( ParseStart<T> context, Provider provider ) {

@@ -101,6 +101,16 @@ public final class GeneratedJavaParser extends GeneratedJavaParserBase {
         }
         return node;
     }
+
+    private Collection<String> pointFreeOperators = new ArrayList<String>();
+    public void setPointFreeOperators(Collection<String> pointFreeOperators) {
+        this.pointFreeOperators = pointFreeOperators;
+    }
+
+    public boolean isPointFreeOperator(String operator) {
+        return this.pointFreeOperators.contains(operator);
+    }
+
 }
 
 PARSER_END(GeneratedJavaParser)
@@ -279,7 +289,8 @@ TOKEN :
 | < PROVIDES: "provides" >
 | < TRANSITIVE: "transitive" >
 | < RULE: "rule" >
-| < NOT: " not" >
+| < NOT: "not" >
+| < NOT_WITH_SPACE: " not" >
 }
 
 /* LITERALS */
@@ -1744,7 +1755,7 @@ Expression DrlxExpressionSwitch():
   LOOKAHEAD(PointFreeExpr(), { drlParsing })
     ret = PointFreeExpr()
   |
-  LOOKAHEAD( HalfPointFreeExpr(), { drlParsing })
+  LOOKAHEAD( HalfPointFreeExpr(), { drlParsing && (isPointFreeOperator(getToken(1).image) || isPointFreeOperator(getToken(2).image) )})
     ret = HalfPointFreeExpr()
   |
   ret = UnaryExpressionNotPlusMinus()
@@ -3074,7 +3085,7 @@ Expression PointFreeExpr():
         (
             left = PrimaryPrefix() { begin=token(); }
             (
-                          <NOT>
+                          <NOT_WITH_SPACE>
                           { negated = true; }
             )*
 

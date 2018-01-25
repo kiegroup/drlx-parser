@@ -112,7 +112,9 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
             rightExprs.get(0).accept( visitor, arg );
         } else {
             visitor.printer.print("(");
-            rightExprs.get(0).accept( visitor, arg );
+            if(rightExprs.isNonEmpty()) {
+                rightExprs.get(0).accept(visitor, arg);
+            }
             for (int i = 1; i < rightExprs.size(); i++) {
                 visitor.printer.print(", ");
                 rightExprs.get(i).accept( visitor, arg );
@@ -194,7 +196,7 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
     public void visit(HalfPointFreeExpr pointFreeExpr, Void arg ) {
         visitor.printComment(pointFreeExpr.getComment(), arg);
         if(pointFreeExpr.isNegated()) {
-            visitor.printer.print("not");
+            visitor.printer.print("not ");
         }
         pointFreeExpr.getOperator().accept( visitor, arg );
         if (pointFreeExpr.getArg1() != null) {
