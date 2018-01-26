@@ -31,14 +31,18 @@ public class HalfPointFreeExpr extends Expression {
     private boolean negated;
     private final Expression arg1;
     private final Expression arg2;
+    private final Expression arg3;
+    private final Expression arg4;
 
-    public HalfPointFreeExpr(TokenRange tokenRange, NodeList<Expression> right, SimpleName operator, Boolean negated, Expression arg1, Expression arg2 ) {
+    public HalfPointFreeExpr(TokenRange tokenRange, NodeList<Expression> right, SimpleName operator, Boolean negated, Expression arg1, Expression arg2 , Expression arg3, Expression arg4 ) {
         super(tokenRange);
         this.right = right;
         this.operator = operator;
         this.negated = negated;
         this.arg1 = arg1;
         this.arg2 = arg2;
+        this.arg3 = arg3;
+        this.arg4 = arg4;
     }
 
     @Override
@@ -69,5 +73,13 @@ public class HalfPointFreeExpr extends Expression {
 
     public Expression getArg2() {
         return arg2;
+    }
+
+    public Expression getArg3() {
+        return arg3;
+    }
+
+    public Expression getArg4() {
+        return arg4;
     }
 }

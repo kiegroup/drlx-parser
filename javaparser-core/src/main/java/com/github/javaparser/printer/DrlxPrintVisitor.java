@@ -104,6 +104,14 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
                 visitor.printer.print(",");
                 pointFreeExpr.getArg2().accept( visitor, arg );
             }
+            if (pointFreeExpr.getArg3() != null) {
+                visitor.printer.print(",");
+                pointFreeExpr.getArg3().accept( visitor, arg );
+            }
+            if (pointFreeExpr.getArg4() != null) {
+                visitor.printer.print(",");
+                pointFreeExpr.getArg4().accept( visitor, arg );
+            }
             visitor.printer.print("]");
         }
         visitor.printer.print(" ");
@@ -165,10 +173,10 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
     }
 
     @Override
-    public void visit(OOPathExpr pointFreeExpr, Void arg ) {
-        visitor.printComment(pointFreeExpr.getComment(), arg);
+    public void visit(OOPathExpr oopathExpr, Void arg ) {
+        visitor.printComment(oopathExpr.getComment(), arg);
         visitor.printer.print("/");
-        NodeList<OOPathChunk> chunks = pointFreeExpr.getChunks();
+        NodeList<OOPathChunk> chunks = oopathExpr.getChunks();
         for (int i = 0; i <  chunks.size(); i++) {
             OOPathChunk o = chunks.get(i);
             visitor.printer.print(o.getField().toString());
@@ -205,6 +213,14 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
             if (pointFreeExpr.getArg2() != null) {
                 visitor.printer.print(",");
                 pointFreeExpr.getArg2().accept( visitor, arg );
+            }
+            if (pointFreeExpr.getArg3() != null) {
+                visitor.printer.print(",");
+                pointFreeExpr.getArg3().accept( visitor, arg );
+            }
+            if (pointFreeExpr.getArg4() != null) {
+                visitor.printer.print(",");
+                pointFreeExpr.getArg4().accept( visitor, arg );
             }
             visitor.printer.print("]");
         }

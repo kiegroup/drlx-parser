@@ -55,8 +55,7 @@ public class DrlxParserTest {
 
     private static final Collection<String> operators = new HashSet<>();
     {
-        operators.addAll(Arrays.asList("after", "before", "in", "matches"));
-
+        operators.addAll(Arrays.asList("after", "before", "in", "matches", "includes"));
     }
 
     final ParseStart<DrlxExpression> parser = DrlxParser.buildDrlxParserWithArguments(operators);
@@ -143,6 +142,22 @@ public class DrlxParserTest {
         String expr = "this after[5ms,8d] $a";
         Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
+    public void testDotFreeExprWithFourTemporalArgs() {
+        String expr = "this includes[1s,1m,1h,1d] $a";
+        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        assertTrue(expression instanceof PointFreeExpr);
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
+    public void testHalfDotFreeExprWithFourTemporalArgs() {
+        String expr = "includes[1s,1m,1h,1d] $a";
+        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        assertThat(expression, instanceOf(HalfPointFreeExpr.class));
         assertEquals(expr, toDrlx(expression));
     }
 

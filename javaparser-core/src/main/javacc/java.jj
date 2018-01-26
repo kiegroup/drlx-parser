@@ -3076,8 +3076,7 @@ Expression PointFreeExpr():
     NodeList<Expression> right = emptyList();
     SimpleName operator;
     boolean negated = false;
-    Expression arg1 = null;
-    Expression arg2 = null;
+    TemporalLiteralArguments temporalLiteralArguments;
     Expression tempExpr;
 }
 {
@@ -3091,12 +3090,7 @@ Expression PointFreeExpr():
 
             (
                 operator = SimpleName()
-                [
-                  LOOKAHEAD("[" TemporalLiteral() ",")
-                  ( "[" arg1 = TemporalLiteral() "," arg2 = TemporalLiteral() "]" )
-                  |
-                  ( "[" arg1 = TemporalLiteral() "]" )
-                ]
+                temporalLiteralArguments = TemporalLiteralArguments()
                 (
                   LOOKAHEAD(1)
                   ( right = Expressions())
@@ -3104,8 +3098,12 @@ Expression PointFreeExpr():
                   ( tempExpr = PrimaryExpression() { right = add(right, tempExpr); } )
                 )
                   {
-                    return new PointFreeExpr(range(begin, token()), left, right, operator, negated, arg1, arg2 );
-                  }
+                    if(temporalLiteralArguments != null) {
+                        return new PointFreeExpr(range(begin, token()), left, right, operator, negated, temporalLiteralArguments.getArg1(), temporalLiteralArguments.getArg2(), temporalLiteralArguments.getArg3(), temporalLiteralArguments.getArg4() );
+                    } else {
+                        return new PointFreeExpr(range(begin, token()), left, right, operator, negated, null, null, null, null);
+                    }
+                }
             )
         )
     )
@@ -3118,8 +3116,7 @@ Expression HalfPointFreeExpr():
     NodeList<Expression> right = emptyList();
     SimpleName operator;
     boolean negated = false;
-    Expression arg1 = null;
-    Expression arg2 = null;
+    TemporalLiteralArguments temporalLiteralArguments;
     Expression tempExpr;
 }
 {
@@ -3130,12 +3127,7 @@ Expression HalfPointFreeExpr():
                           { negated = true; }
             )*
             operator = SimpleName() { begin = token(); }
-            [
-              LOOKAHEAD("[" TemporalLiteral() ",")
-              ( "[" arg1 = TemporalLiteral() "," arg2 = TemporalLiteral() "]" )
-              |
-              ( "[" arg1 = TemporalLiteral() "]" )
-            ]
+            temporalLiteralArguments = TemporalLiteralArguments()
             (
               LOOKAHEAD(1)
               ( right = Expressions())
@@ -3143,11 +3135,36 @@ Expression HalfPointFreeExpr():
               ( tempExpr = PrimaryPrefix() { right = add(right, tempExpr); } )
             )
               {
-                return new HalfPointFreeExpr(range(begin, token()), right, operator, negated, arg1, arg2 );
+                if(temporalLiteralArguments != null) {
+                    return new HalfPointFreeExpr(range(begin, token()), right, operator, negated, temporalLiteralArguments.getArg1(), temporalLiteralArguments.getArg2(), temporalLiteralArguments.getArg3(), temporalLiteralArguments.getArg4() );
+                } else {
+                    return new HalfPointFreeExpr(range(begin, token()), right, operator, negated, null, null, null, null);
+                }
               }
         )
     )
 }
+
+TemporalLiteralArguments TemporalLiteralArguments():
+{
+    Expression arg1 = null;
+    Expression arg2 = null;
+    Expression arg3 = null;
+    Expression arg4 = null;
+}
+{
+    [
+      LOOKAHEAD("[" TemporalLiteral() "," TemporalLiteral() "," TemporalLiteral() "," TemporalLiteral())
+      ( "[" arg1 = TemporalLiteral() "," arg2 = TemporalLiteral() "," arg3 = TemporalLiteral() "," arg4 = TemporalLiteral() "]" )
+      |
+      LOOKAHEAD("[" TemporalLiteral() ",")
+      ( "[" arg1 = TemporalLiteral() "," arg2 = TemporalLiteral() "]" )
+      |
+      ( "[" arg1 = TemporalLiteral() "]" )
+    ]
+    { return new TemporalLiteralArguments(arg1, arg2, arg3, arg4); }
+}
+
 
 
 TemporalLiteralExpr TemporalLiteral():
