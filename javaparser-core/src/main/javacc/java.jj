@@ -3041,14 +3041,16 @@ OOPathChunk OOPathChunk():
     JavaToken begin;
     SimpleName field;
     SimpleName inlineCast = null;
-    Expression condition = null;
+    Expression tempExpr;
+    List<Expression> conditions = new ArrayList<Expression>();
 }
 {
   field = SimpleName() { begin=token(); }
   [ "#" inlineCast = SimpleName() ]
-  [ "[" condition = Expression() "]" ]
+  [ "[" (tempExpr = Expression() { conditions = add(conditions, tempExpr); } )
+    (<COMMA> tempExpr = Expression() { conditions = add(conditions, tempExpr); } )* "]" ]
 
-    { return new OOPathChunk(range(begin, token()), field, inlineCast, condition); }
+    { return new OOPathChunk(range(begin, token()), field, inlineCast, conditions); }
 }
 
 DrlxExpression DrlxExpression():

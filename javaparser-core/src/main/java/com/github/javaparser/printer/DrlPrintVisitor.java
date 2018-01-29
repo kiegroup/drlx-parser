@@ -17,7 +17,6 @@
 package com.github.javaparser.printer;
 
 import com.github.javaparser.ast.drlx.*;
-import com.github.javaparser.ast.drlx.expr.DrlxExpression;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.SimpleName;
@@ -27,6 +26,7 @@ import com.github.javaparser.ast.visitor.AbstractVoidRuleVisitor;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class DrlPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintVisitor> {
@@ -124,11 +124,17 @@ public class DrlPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintVi
             inlineCast.accept( visitor, arg );
         }
 
-        Expression condition = chunk.getCondition();
-        if (condition != null) {
-            visitor.printer.print( "[" );
-            condition.accept( visitor, arg );
-            visitor.printer.print( "]" );
+        List<Expression> condition = chunk.getConditions();
+        final Iterator<Expression> iterator = condition.iterator();
+        if (!condition.isEmpty()) {
+            visitor.printer.print("[");
+            Expression first = iterator.next();
+            first.accept(visitor, arg);
+            while(iterator.hasNext()) {
+                visitor.printer.print(",");
+                iterator.next().accept(visitor, arg);
+            }
+            visitor.printer.print("]");
         }
     }
 }

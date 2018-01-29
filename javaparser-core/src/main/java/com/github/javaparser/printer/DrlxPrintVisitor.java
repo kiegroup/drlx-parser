@@ -16,6 +16,9 @@
 
 package com.github.javaparser.printer;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.drlx.OOPathChunk;
 import com.github.javaparser.ast.drlx.OOPathExpr;
@@ -178,14 +181,23 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
         visitor.printer.print("/");
         NodeList<OOPathChunk> chunks = oopathExpr.getChunks();
         for (int i = 0; i <  chunks.size(); i++) {
-            OOPathChunk o = chunks.get(i);
-            visitor.printer.print(o.getField().toString());
-            Expression condition = o.getCondition();
-            if (condition != null) {
+            final OOPathChunk chunk = chunks.get(i);
+            chunk.accept(visitor, arg);
+            visitor.printer.print(chunk.getField().toString());
+
+            List<Expression> condition = chunk.getConditions();
+            final Iterator<Expression> iterator = condition.iterator();
+            if (!condition.isEmpty()) {
                 visitor.printer.print("[");
-                visitor.printer.print(condition.toString());
+                Expression first = iterator.next();
+                first.accept(visitor, arg);
+                while(iterator.hasNext()) {
+                    visitor.printer.print(",");
+                    iterator.next().accept(visitor, arg);
+                }
                 visitor.printer.print("]");
             }
+
             if(i != chunks.size() - 1) { // Avoid printing last /
                 visitor.printer.print("/");
             }

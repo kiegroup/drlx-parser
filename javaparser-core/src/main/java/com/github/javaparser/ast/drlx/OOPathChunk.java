@@ -16,6 +16,8 @@
 
 package com.github.javaparser.ast.drlx;
 
+import java.util.List;
+
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.SimpleName;
@@ -26,9 +28,9 @@ public class OOPathChunk extends Expression {
 
     private final SimpleName field;
     private final SimpleName inlineCast;
-    private final Expression condition;
+    private final List<Expression> condition;
 
-    public OOPathChunk(TokenRange range, SimpleName field, SimpleName inlineCast, Expression condition ) {
+    public OOPathChunk(TokenRange range, SimpleName field, SimpleName inlineCast, List<Expression> condition ) {
         super( range );
         this.field = field;
         this.inlineCast = inlineCast;
@@ -43,7 +45,7 @@ public class OOPathChunk extends Expression {
         return inlineCast;
     }
 
-    public Expression getCondition() {
+    public List<Expression> getConditions() {
         return condition;
     }
 

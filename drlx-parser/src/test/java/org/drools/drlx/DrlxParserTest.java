@@ -16,7 +16,6 @@
 
 package org.drools.drlx;
 
-import java.awt.Point;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -40,7 +39,6 @@ import com.github.javaparser.ast.drlx.expr.HalfBinaryExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
@@ -177,6 +175,15 @@ public class DrlxParserTest {
     }
 
     @Test
+    public void testOOPathExprWithMultipleCondition() {
+        String expr = "$address : /address[street == \"Elm\",city == \"Big City\"]";
+        DrlxExpression drlx = DrlxParser.parseExpression( parser, expr );
+        Expression expression = drlx.getExpr();
+        assertTrue(expression instanceof OOPathExpr);
+        assertEquals(expr, toDrlx(drlx));
+    }
+
+    @Test
     public void testOOPathExprWithDeclaration() {
         String expr = "$toy : /wife/children[age > 10]/toys";
         DrlxExpression drlx = DrlxParser.parseExpression( parser, expr );
@@ -195,8 +202,8 @@ public class DrlxParserTest {
         assertTrue(expression instanceof OOPathExpr);
 
         final OOPathChunk secondChunk = ((OOPathExpr) expression).getChunks().get(2);
-        final BinaryExpr secondChunkCondition = (BinaryExpr) secondChunk.getCondition();
-        final NameExpr rightName = (NameExpr) ((FieldAccessExpr)secondChunkCondition.getRight()).getScope();
+        final BinaryExpr secondChunkFirstCondition = (BinaryExpr) secondChunk.getConditions().get(0);
+        final NameExpr rightName = (NameExpr) ((FieldAccessExpr)secondChunkFirstCondition.getRight()).getScope();
         assertEquals(2, rightName.getBackReferencesCount());
         assertEquals(expr, toDrlx(drlx));
     }
