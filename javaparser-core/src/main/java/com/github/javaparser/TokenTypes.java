@@ -231,11 +231,14 @@ public class TokenTypes {
             case GT:
                 return JavaToken.Category.OPERATOR;
             // These are DRLX tokens, They don't have the constants generated
-            case 76:
-            case 146:
-            case 147:
-            case 148:
+            case MVEL_STARTS_WITH:
+            case MVEL_ENDS_WITH:
+            case MVEL_LENGTH:
             case NOT:
+            case NOT_WITH_SPACE:
+            case 149:
+            case 150:
+            case 151:
                 return JavaToken.Category.DRLX;
             // The following are tokens that are only used internally by the lexer
             case ENTER_JAVADOC_COMMENT:

@@ -42,6 +42,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
+import static org.drools.drlx.DrlxParser.parseExpression;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -61,7 +62,7 @@ public class DrlxParserTest {
     @Test
     public void testParseSimpleExpr() {
         String expr = "name == \"Mark\"";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         System.out.println(expression);
 
         BinaryExpr binaryExpr = ( (BinaryExpr) expression );
@@ -73,14 +74,14 @@ public class DrlxParserTest {
     @Test
     public void testParseSafeCastExpr() {
         String expr = "this instanceof Person && ((Person)this).name == \"Mark\"";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         System.out.println(expression);
     }
 
     @Test
     public void testParseInlineCastExpr() {
         String expr = "this#Person.name == \"Mark\"";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertEquals(expr, toDrlx(expression));
     }
 
@@ -96,14 +97,14 @@ public class DrlxParserTest {
     @Test
     public void testParseNullSafeFieldAccessExpr() {
         String expr = "person!.name == \"Mark\"";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertEquals(expr, toDrlx(expression));
     }
 
     @Test
     public void testDotFreeExpr() {
         String expr = "this after $a";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
         assertEquals(expr, toDrlx(expression));
     }
@@ -111,7 +112,7 @@ public class DrlxParserTest {
     @Test
     public void testDotFreeExprWithOr() {
         String expr = "this after $a || this after $b";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertTrue(expression instanceof BinaryExpr);
         assertEquals(expr, toDrlx(expression));
     }
@@ -119,7 +120,7 @@ public class DrlxParserTest {
     @Test
     public void testDotFreeExprWithArgs() {
         String expr = "this after[5,8] $a";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
         assertFalse(((PointFreeExpr)expression).isNegated());
         assertEquals("this after[5ms,8ms] $a", toDrlx(expression)); // please note the parsed expression once normalized would take the time unit for milliseconds.
@@ -129,7 +130,7 @@ public class DrlxParserTest {
     @Test
     public void testDotFreeExprWithArgsNegated() {
         String expr = "this not after[5,8] $a";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertThat(expression, instanceOf(PointFreeExpr.class));
         assertTrue(((PointFreeExpr)expression).isNegated());
         assertEquals("this not after[5ms,8ms] $a", toDrlx(expression)); // please note the parsed expression once normalized would take the time unit for milliseconds.
@@ -138,7 +139,7 @@ public class DrlxParserTest {
     @Test
     public void testDotFreeExprWithTemporalArgs() {
         String expr = "this after[5ms,8d] $a";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
         assertEquals(expr, toDrlx(expression));
     }
@@ -146,7 +147,7 @@ public class DrlxParserTest {
     @Test
     public void testDotFreeExprWithFourTemporalArgs() {
         String expr = "this includes[1s,1m,1h,1d] $a";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
         assertEquals(expr, toDrlx(expression));
     }
@@ -154,7 +155,7 @@ public class DrlxParserTest {
     @Test
     public void testHalfDotFreeExprWithFourTemporalArgs() {
         String expr = "includes[1s,1m,1h,1d] $a";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertThat(expression, instanceOf(HalfPointFreeExpr.class));
         assertEquals(expr, toDrlx(expression));
     }
@@ -162,13 +163,13 @@ public class DrlxParserTest {
     @Test(expected = ParseProblemException.class)
     public void testInvalidTemporalArgs() {
         String expr = "this after[5ms,8f] $a";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
     }
 
     @Test
     public void testOOPathExpr() {
         String expr = "/wife/children[age > 10]/toys";
-        DrlxExpression drlx = DrlxParser.parseExpression( parser, expr );
+        DrlxExpression drlx = parseExpression( parser, expr );
         Expression expression = drlx.getExpr();
         assertTrue(expression instanceof OOPathExpr);
         assertEquals(expr, toDrlx(drlx));
@@ -177,7 +178,7 @@ public class DrlxParserTest {
     @Test
     public void testOOPathExprWithMultipleCondition() {
         String expr = "$address : /address[street == \"Elm\",city == \"Big City\"]";
-        DrlxExpression drlx = DrlxParser.parseExpression( parser, expr );
+        DrlxExpression drlx = parseExpression( parser, expr );
         Expression expression = drlx.getExpr();
         assertTrue(expression instanceof OOPathExpr);
         assertEquals(expr, toDrlx(drlx));
@@ -186,7 +187,7 @@ public class DrlxParserTest {
     @Test
     public void testOOPathExprWithDeclaration() {
         String expr = "$toy : /wife/children[age > 10]/toys";
-        DrlxExpression drlx = DrlxParser.parseExpression( parser, expr );
+        DrlxExpression drlx = parseExpression( parser, expr );
         assertEquals("$toy", drlx.getBind().asString());
         Expression expression = drlx.getExpr();
         assertTrue(expression instanceof OOPathExpr);
@@ -196,7 +197,7 @@ public class DrlxParserTest {
     @Test
     public void testOOPathExprWithBackReference() {
         String expr = "$toy : /wife/children/toys[name.length == ../../name.length]";
-        DrlxExpression drlx = DrlxParser.parseExpression( parser, expr );
+        DrlxExpression drlx = parseExpression( parser, expr );
         assertEquals("$toy", drlx.getBind().asString());
         Expression expression = drlx.getExpr();
         assertTrue(expression instanceof OOPathExpr);
@@ -236,7 +237,7 @@ public class DrlxParserTest {
     @Test
     public void testInExpression() {
         String expr = "this in ()";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
         assertEquals(expr, toDrlx(expression));
     }
@@ -245,7 +246,7 @@ public class DrlxParserTest {
     /* This shouldn't be supported, an HalfBinaryExpr should be valid only after a && or a || */
     public void testUnsupportedImplicitParameter() {
         String expr = "== \"Mark\"";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertTrue(expression instanceof HalfBinaryExpr);
         assertEquals(expr, toDrlx(expression));
     }
@@ -259,7 +260,7 @@ public class DrlxParserTest {
     @Test
     public void testOrWithImplicitParameter() {
         String expr = "name == \"Mark\" || == \"Mario\" || == \"Luca\"";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         System.out.println(expression);
 
         BinaryExpr comboExpr = ( (BinaryExpr) expression );
@@ -282,7 +283,7 @@ public class DrlxParserTest {
     @Test
     public void testAndWithImplicitParameter() {
         String expr = "name == \"Mark\" && == \"Mario\" && == \"Luca\"";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         System.out.println(expression);
 
         BinaryExpr comboExpr = ( (BinaryExpr) expression );
@@ -305,7 +306,7 @@ public class DrlxParserTest {
     @Test
     public void testAndWithImplicitParameter2() {
         String expr = "name == \"Mark\" && == \"Mario\" || == \"Luca\"";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         System.out.println(expression);
 
         BinaryExpr comboExpr = ( (BinaryExpr) expression );
@@ -355,7 +356,7 @@ public class DrlxParserTest {
     @Test
     public void dotFreeWithRegexp() {
         String expr = "name matches \"[a-z]*\"";
-        Expression expression = DrlxParser.parseExpression( parser, expr ).getExpr();
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertThat(expression, instanceOf(PointFreeExpr.class));
         assertEquals("name matches \"[a-z]*\"", toDrlx(expression));
         PointFreeExpr e = (PointFreeExpr)expression;
@@ -367,14 +368,14 @@ public class DrlxParserTest {
     @Test
     public void implicitOperatorWithRegexps() {
         String expr = "name matches \"[a-z]*\" || matches \"pippo\"";
-        Expression expression = DrlxParser.parseExpression(parser, expr).getExpr();
+        Expression expression = parseExpression(parser, expr).getExpr();
         assertEquals("name matches \"[a-z]*\" || matches \"pippo\"", toDrlx(expression));
     }
 
     @Test
     public void halfPointFreeExpr() {
         String expr = "matches \"[A-Z]*\"";
-        Expression expression = DrlxParser.parseExpression(parser, expr).getExpr();
+        Expression expression = parseExpression(parser, expr).getExpr();
         assertThat(expression, instanceOf(HalfPointFreeExpr.class));
         assertEquals("matches \"[A-Z]*\"", toDrlx(expression));
 
@@ -383,7 +384,7 @@ public class DrlxParserTest {
     @Test
     public void halfPointFreeExprNegated() {
         String expr = "not matches \"[A-Z]*\"";
-        Expression expression = DrlxParser.parseExpression(parser, expr).getExpr();
+        Expression expression = parseExpression(parser, expr).getExpr();
         assertThat(expression, instanceOf(HalfPointFreeExpr.class));
         assertEquals("not matches \"[A-Z]*\"", toDrlx(expression));
 
@@ -391,10 +392,44 @@ public class DrlxParserTest {
 
     @Test
     public void regressionTestHalfPointFree() {
-        assertThat(DrlxParser.parseExpression(parser, "getAddress().getAddressName().length() == 5").getExpr(), instanceOf(BinaryExpr.class));
-        assertThat(DrlxParser.parseExpression(parser, "isFortyYearsOld(this, true)").getExpr(), instanceOf(MethodCallExpr.class));
-        assertThat(DrlxParser.parseExpression(parser, "getName().startsWith(\"M\")").getExpr(), instanceOf(MethodCallExpr.class));
-        assertThat(DrlxParser.parseExpression(parser, "isPositive($i.intValue())").getExpr(), instanceOf(MethodCallExpr.class));
-        assertThat(DrlxParser.parseExpression(parser, "someEntity.someString in (\"1.500\")").getExpr(), instanceOf(PointFreeExpr.class));
+        assertThat(parseExpression(parser, "getAddress().getAddressName().length() == 5").getExpr(), instanceOf(BinaryExpr.class));
+        assertThat(parseExpression(parser, "isFortyYearsOld(this, true)").getExpr(), instanceOf(MethodCallExpr.class));
+        assertThat(parseExpression(parser, "getName().startsWith(\"M\")").getExpr(), instanceOf(MethodCallExpr.class));
+        assertThat(parseExpression(parser, "isPositive($i.intValue())").getExpr(), instanceOf(MethodCallExpr.class));
+        assertThat(parseExpression(parser, "someEntity.someString in (\"1.500\")").getExpr(), instanceOf(PointFreeExpr.class));
+    }
+
+    @Test
+    public void mvelSquareBracketsOperators() {
+        testMvelSquareOperator("this str[startsWith] \"M\"", "str[startsWith]", "this", "\"M\"", false);
+        testMvelSquareOperator("this not str[startsWith] \"M\"", "str[startsWith]", "this", "\"M\"", true);
+        testMvelSquareOperator("this str[endsWith] \"K\"", "str[endsWith]", "this", "\"K\"", false);
+        testMvelSquareOperator("this str[length] 17", "str[length]", "this", "17", false);
+
+    }
+
+    @Test
+    public void halfPointFreeMVEL() {
+        String expr = "this str[startsWith] \"M\" || str[startsWith] \"E\"";
+        Expression expression = parseExpression(parser, expr).getExpr();
+        assertEquals("this str[startsWith] \"M\" || str[startsWith] \"E\"", toDrlx(expression));
+
+        Expression expression2 = parseExpression(parser, "str[startsWith] \"E\"").getExpr();
+        assertThat(expression2, instanceOf(HalfPointFreeExpr.class));
+        assertEquals("str[startsWith] \"E\"", toDrlx(expression2));
+
+    }
+
+
+    private void testMvelSquareOperator(String wholeExpression, String operator, String left, String right, boolean isNegated) {
+        String expr = wholeExpression;
+        Expression expression = parseExpression(parser, expr ).getExpr();
+        assertThat(expression, instanceOf(PointFreeExpr.class));
+        assertEquals(wholeExpression, toDrlx(expression));
+        PointFreeExpr e = (PointFreeExpr)expression;
+        assertEquals(operator, e.getOperator().asString());
+        assertEquals(left, e.getLeft().toString());
+        assertEquals(right, e.getRight().get(0).toString());
+        assertEquals(isNegated, e.isNegated());
     }
 }

@@ -291,6 +291,9 @@ TOKEN :
 | < RULE: "rule" >
 | < NOT: "not" >
 | < NOT_WITH_SPACE: " not" >
+| < MVEL_STARTS_WITH: "str[startsWith]" >
+| < MVEL_ENDS_WITH: "str[endsWith]" >
+| < MVEL_LENGTH: "str[length]" >
 }
 
 /* LITERALS */
@@ -1752,6 +1755,12 @@ Expression DrlxExpressionSwitch():
 }
 {
   (
+  LOOKAHEAD(PointFreeExprMvel(), { drlParsing })
+    ret = PointFreeExprMvel()
+  |
+  LOOKAHEAD(HalfPointFreeExprMvel(), { drlParsing })
+    ret = HalfPointFreeExprMvel()
+  |
   LOOKAHEAD(PointFreeExpr(), { drlParsing })
     ret = PointFreeExpr()
   |
@@ -3089,7 +3098,6 @@ Expression PointFreeExpr():
                           <NOT_WITH_SPACE>
                           { negated = true; }
             )*
-
             (
                 operator = SimpleName()
                 temporalLiteralArguments = TemporalLiteralArguments()
@@ -3107,6 +3115,35 @@ Expression PointFreeExpr():
                     }
                 }
             )
+        )
+    )
+}
+
+Expression PointFreeExprMvel():
+{
+    JavaToken begin;
+    Expression left;
+    NodeList<Expression> right = emptyList();
+    boolean negated = false;
+    Expression tempExpr;
+    Token mvelOperator = null;
+}
+{
+    (
+        (
+            left = PrimaryExpression() { begin=token(); }
+            (
+                          <NOT_WITH_SPACE>
+                          { negated = true; }
+            )*
+            (
+                (mvelOperator = <MVEL_STARTS_WITH> | mvelOperator = <MVEL_ENDS_WITH> | mvelOperator = <MVEL_LENGTH>)
+                ( tempExpr = PrimaryExpression() { right = add(right, tempExpr); } )
+            )
+            {
+                return new PointFreeExpr(range(begin, token()), left, right, new SimpleName(mvelOperator.toString()), negated, null, null, null, null);
+            }
+
         )
     )
 }
@@ -3143,6 +3180,33 @@ Expression HalfPointFreeExpr():
                     return new HalfPointFreeExpr(range(begin, token()), right, operator, negated, null, null, null, null);
                 }
               }
+        )
+    )
+}
+
+Expression HalfPointFreeExprMvel():
+{
+    JavaToken begin;
+    NodeList<Expression> right = emptyList();
+    boolean negated = false;
+    Expression tempExpr;
+    Token mvelOperator = null;
+}
+{
+    (
+        (
+            (
+                          <NOT>
+                          { negated = true; }
+            )*
+            (
+                (mvelOperator = <MVEL_STARTS_WITH> | mvelOperator = <MVEL_ENDS_WITH> | mvelOperator = <MVEL_LENGTH>) { begin = token(); }
+                ( tempExpr = PrimaryExpression() { right = add(right, tempExpr); } )
+            )
+            {
+                return new HalfPointFreeExpr(range(begin, token()), right, new SimpleName(mvelOperator.toString()), negated, null, null, null, null);
+            }
+
         )
     )
 }

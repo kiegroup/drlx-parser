@@ -233,8 +233,8 @@ class JavaParserTest {
         // -1 to take off the default: case.
         int switchEntries = tokenTypesCu.findAll(SwitchEntryStmt.class).size() - 1;
         // The amount of "case XXX:" in TokenTypes.java should be equal to the amount of tokens JavaCC knows about:
-        // DRLX we have 153 token now and not everyone has a category
-        assertEquals(tokenCount, 153);
+        // DRLX we have other tokens now and not everyone has a category
+        assertEquals(156, tokenCount);
     }
 
     @Test
