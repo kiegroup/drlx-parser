@@ -32,6 +32,14 @@ import com.github.javaparser.ast.type.*;
 
 public class NoCommentHashCodeVisitor implements GenericVisitor<Integer, Void> {
 
+    private GenericRuleVisitor<Integer, Void> ruleVisitor = new GenericRuleVisitorAdapter<Integer, Void>();
+
+    @Override
+    public GenericRuleVisitor<Integer, Void> getRuleGenericVisitor() {
+        return ruleVisitor;
+    }
+
+
     private static final NoCommentHashCodeVisitor SINGLETON = new NoCommentHashCodeVisitor();
 
     public static int hashCode(final Node node) {

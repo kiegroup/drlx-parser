@@ -38,7 +38,7 @@ public class DrlxExpression extends Node {
 
     @Override
     public <R, A> R accept( GenericVisitor<R, A> v, A arg ) {
-        throw new UnsupportedOperationException();
+        return v.getRuleGenericVisitor().visit(this, arg);
     }
 
     @Override

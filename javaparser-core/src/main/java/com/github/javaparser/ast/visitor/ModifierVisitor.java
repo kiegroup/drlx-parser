@@ -48,6 +48,14 @@ import java.util.Optional;
  */
 public class ModifierVisitor<A> implements GenericVisitor<Visitable, A> {
 
+    private GenericRuleVisitor<Visitable, A> ruleVisitor = new GenericRuleVisitorAdapter<Visitable, A>();
+
+    @Override
+    public GenericRuleVisitor<Visitable, A> getRuleGenericVisitor() {
+        return ruleVisitor;
+    }
+
+
     @Override
     public Visitable visit(final AnnotationDeclaration n, final A arg) {
         NodeList<BodyDeclaration<?>> members = modifyList(n.getMembers(), arg);

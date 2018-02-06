@@ -37,6 +37,14 @@ import com.github.javaparser.ast.type.*;
  */
 public class ObjectIdentityEqualsVisitor implements GenericVisitor<Boolean, Visitable> {
 
+    private GenericRuleVisitor<Boolean, Visitable> ruleVisitor = new GenericRuleVisitorAdapter<Boolean, Visitable>();
+
+    @Override
+    public GenericRuleVisitor<Boolean, Visitable> getRuleGenericVisitor() {
+        return ruleVisitor;
+    }
+
+
     private static final ObjectIdentityEqualsVisitor SINGLETON = new ObjectIdentityEqualsVisitor();
 
     public static boolean equals(final Node n, final Node n2) {

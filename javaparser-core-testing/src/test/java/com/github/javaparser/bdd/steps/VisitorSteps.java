@@ -26,6 +26,8 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.visitor.CloneVisitor;
 import com.github.javaparser.ast.visitor.GenericListVisitorAdapter;
+import com.github.javaparser.ast.visitor.GenericRuleVisitor;
+import com.github.javaparser.ast.visitor.GenericRuleVisitorAdapter;
 import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.bdd.visitors.PositionTestVisitor;
@@ -101,6 +103,11 @@ public class VisitorSteps {
             @Override
             public List<String> visit(VariableDeclarator n, Void arg) {
                 return Collections.singletonList(n.getNameAsString());
+            }
+
+            @Override
+            public GenericRuleVisitor<List<String>, Void> getRuleGenericVisitor() {
+                return new GenericRuleVisitorAdapter<>();
             }
         };
     }

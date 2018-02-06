@@ -39,6 +39,13 @@ import java.util.Optional;
  */
 public class EqualsVisitor implements GenericVisitor<Boolean, Visitable> {
 
+    private GenericRuleVisitor<Boolean, Visitable> ruleVisitor = new GenericRuleVisitorAdapter<Boolean, Visitable>();
+
+    @Override
+    public GenericRuleVisitor<Boolean, Visitable> getRuleGenericVisitor() {
+        return ruleVisitor;
+    }
+
     private static final EqualsVisitor SINGLETON = new EqualsVisitor();
 
     public static boolean equals(final Node n, final Node n2) {

@@ -38,6 +38,13 @@ import java.util.Optional;
  */
 public class CloneVisitor implements GenericVisitor<Visitable, Object> {
 
+    private GenericRuleVisitor<Visitable, Object> ruleVisitor = new GenericRuleVisitorAdapter<Visitable, Object>();
+
+    @Override
+    public GenericRuleVisitor<Visitable, Object> getRuleGenericVisitor() {
+        return ruleVisitor;
+    }
+
     @Override
     @Generated("com.github.javaparser.generator.core.visitor.CloneVisitorGenerator")
     public Visitable visit(final CompilationUnit n, final Object arg) {

@@ -33,6 +33,13 @@ import java.util.Optional;
 
 public class NoCommentEqualsVisitor implements GenericVisitor<Boolean, Visitable> {
 
+    private GenericRuleVisitor<Boolean, Visitable> ruleVisitor = new GenericRuleVisitorAdapter<Boolean, Visitable>();
+
+    @Override
+    public GenericRuleVisitor<Boolean, Visitable> getRuleGenericVisitor() {
+        return ruleVisitor;
+    }
+
     private static final NoCommentEqualsVisitor SINGLETON = new NoCommentEqualsVisitor();
 
     public static boolean equals(final Node n, final Node n2) {

@@ -47,7 +47,7 @@ public class HalfPointFreeExpr extends Expression {
 
     @Override
     public <R, A> R accept( GenericVisitor<R, A> v, A arg ) {
-        throw new UnsupportedOperationException();
+        return v.getRuleGenericVisitor().visit(this, arg);
     }
 
     @Override

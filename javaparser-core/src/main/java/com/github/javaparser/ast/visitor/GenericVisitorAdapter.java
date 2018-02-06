@@ -39,6 +39,14 @@ import com.github.javaparser.ast.type.*;
  */
 public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A> {
 
+    private GenericRuleVisitor<R, A> ruleVisitor = new GenericRuleVisitorAdapter<R, A>();
+
+    @Override
+    public GenericRuleVisitor<R, A> getRuleGenericVisitor() {
+        return ruleVisitor;
+    }
+
+
     @Override
     public R visit(final AnnotationDeclaration n, final A arg) {
         R result;
