@@ -235,10 +235,9 @@ public class TokenTypes {
             case MVEL_ENDS_WITH:
             case MVEL_LENGTH:
             case NOT:
-            case NOT_WITH_SPACE:
+            case 148:
             case 149:
             case 150:
-            case 151:
                 return JavaToken.Category.DRLX;
             // The following are tokens that are only used internally by the lexer
             case ENTER_JAVADOC_COMMENT:
