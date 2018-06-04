@@ -118,7 +118,6 @@ public class DrlxParserTest {
     }
 
     @Test
-    @Ignore("this should also be parsed")
     public void testDotFreeEnclosedWithNameExpr() {
         String expr = "(something after $a)";
         Expression expression = parseExpression( parser, expr ).getExpr();
