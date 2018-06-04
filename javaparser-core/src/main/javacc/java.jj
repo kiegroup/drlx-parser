@@ -1907,7 +1907,18 @@ Expression PrimaryPrefix():
 	  )
 	|
         "(" {begin=token();}
+        (
+            ")" { ret = new LambdaExpr(range(begin, token()), params, new BlockStmt(), true); }
+        | LOOKAHEAD(PointFreeExpr())
             ret = Expression() ")" { ret = new EnclosedExpr(range(begin, token()), ret); }
+        | LOOKAHEAD(Parameter())
+            params = LambdaParameters() ")" { ret = new LambdaExpr(range(begin, token()), params, new BlockStmt(), true); }
+        | LOOKAHEAD(VariableDeclaratorId() ",")
+            params = InferredLambdaParameters() ")" { ret = new LambdaExpr(range(begin, token()), params, new BlockStmt(), true); }
+        |
+            // This could still be a lambda expression, but this is handled after matching -> elsewhere
+            ret = Expression() ")" { ret = new EnclosedExpr(range(begin, token()), ret); }
+        )
 	|
 	  ret = AllocationExpression(null)
 	|
