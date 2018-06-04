@@ -39,6 +39,7 @@ import com.github.javaparser.ast.drlx.expr.HalfBinaryExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
@@ -106,6 +107,20 @@ public class DrlxParserTest {
         String expr = "this after $a";
         Expression expression = parseExpression( parser, expr ).getExpr();
         assertTrue(expression instanceof PointFreeExpr);
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
+    public void testDotFreeEnclosed() {
+        String expr = "(this after $a)";
+        Expression expression = parseExpression( parser, expr ).getExpr();
+        assertEquals(expr, toDrlx(expression));
+    }
+
+    @Test
+    public void testDotFreeEnclosedWithNameExpr() {
+        String expr = "(something after $a)";
+        Expression expression = parseExpression( parser, expr ).getExpr();
         assertEquals(expr, toDrlx(expression));
     }
 
