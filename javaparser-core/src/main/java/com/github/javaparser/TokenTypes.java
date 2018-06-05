@@ -175,6 +175,8 @@ public class TokenTypes {
             case SECOND_LITERAL:
             case MINUTE_LITERAL:
             case HOUR_LITERAL:
+            case BIG_INTEGER_LITERAL:
+            case BIG_DECIMAL_LITERAL:
                 return JavaToken.Category.LITERAL;
             case IDENTIFIER:
                 return JavaToken.Category.IDENTIFIER;
@@ -235,9 +237,9 @@ public class TokenTypes {
             case MVEL_ENDS_WITH:
             case MVEL_LENGTH:
             case NOT:
-            case 148:
-            case 149:
             case 150:
+            case 151:
+            case 152:
                 return JavaToken.Category.DRLX;
             // The following are tokens that are only used internally by the lexer
             case ENTER_JAVADOC_COMMENT:

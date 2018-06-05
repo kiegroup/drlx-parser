@@ -234,7 +234,7 @@ class JavaParserTest {
         int switchEntries = tokenTypesCu.findAll(SwitchEntryStmt.class).size() - 1;
         // The amount of "case XXX:" in TokenTypes.java should be equal to the amount of tokens JavaCC knows about:
         // DRLX we have other tokens now and not everyone has a category
-        assertEquals(155, tokenCount);
+        assertEquals(157, tokenCount);
     }
 
     @Test
