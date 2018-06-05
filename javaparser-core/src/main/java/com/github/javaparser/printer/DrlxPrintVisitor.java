@@ -34,6 +34,8 @@ import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralChunkExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
 import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.BigDecimalLiteralExpr;
+import com.github.javaparser.ast.expr.BigIntegerLiteralExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.visitor.AbstractVoidRuleVisitor;
 
@@ -250,4 +252,15 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
             visitor.printer.print(")");
         }
     }
+
+    public void visit(BigDecimalLiteralExpr bigDecimalLiteralExpr, Void arg) {
+        visitor.printer.print(bigDecimalLiteralExpr.asBigDecimal().toString());
+        visitor.printer.print("B");
+    }
+
+    public void visit(BigIntegerLiteralExpr bigIntegerLiteralExpr, Void arg) {
+        visitor.printer.print(bigIntegerLiteralExpr.asBigInteger().toString());
+        visitor.printer.print("I");
+    }
+
 }

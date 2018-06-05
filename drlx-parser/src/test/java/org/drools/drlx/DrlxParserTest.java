@@ -124,6 +124,18 @@ public class DrlxParserTest {
         assertEquals(expr, toDrlx(expression));
     }
 
+
+    @Test
+    public void testLiteral() {
+        String bigDecimalLiteral = "bigInteger < (50B)";
+        Expression bigDecimalExpr = parseExpression( parser, bigDecimalLiteral ).getExpr();
+        assertEquals(bigDecimalLiteral, toDrlx(bigDecimalExpr));
+
+        String bigIntegerLiteral = "bigInteger == (50I)";
+        Expression bigIntegerExpr = parseExpression( parser, bigIntegerLiteral ).getExpr();
+        assertEquals(bigIntegerLiteral, toDrlx(bigIntegerExpr));
+    }
+
     @Test
     public void testDotFreeExprWithOr() {
         String expr = "this after $a || this after $b";
