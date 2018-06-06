@@ -52,6 +52,8 @@
                             <shadedPattern>org.drools.javaparser</shadedPattern>
                         </relocation>
                     </relocations>
+                    <createSourcesJar>true</createSourcesJar>
+                    <shadeSourcesContent>true</shadeSourcesContent> <!-- the -sources classifier JAR to also contain sources of upstream JP -->
                 </configuration>
                 <executions>
                     <execution>
