@@ -19,11 +19,10 @@ package com.github.javaparser.ast.drlx.expr;
 import java.util.concurrent.TimeUnit;
 
 import com.github.javaparser.TokenRange;
-import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 
-public class TemporalLiteralChunkExpr extends LiteralExpr {
+public class TemporalLiteralChunkExpr extends TemporalChunkExpr {
 
     private int value;
     private TimeUnit timeUnit;

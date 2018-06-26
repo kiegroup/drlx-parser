@@ -16,33 +16,29 @@
 
 package com.github.javaparser.ast.drlx.expr;
 
+import java.util.concurrent.TimeUnit;
+
 import com.github.javaparser.TokenRange;
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 
-public class TemporalLiteralExpr extends LiteralExpr {
+public class TemporalLiteralInfiniteChunkExpr extends TemporalChunkExpr {
 
-    private final NodeList<TemporalChunkExpr> chunks;
-
-    public TemporalLiteralExpr(TokenRange tokenRange, NodeList<TemporalChunkExpr> chunks) {
+    public TemporalLiteralInfiniteChunkExpr(TokenRange tokenRange, String value) {
         super(tokenRange);
-        this.chunks = chunks;
+    }
+
+    public TemporalLiteralInfiniteChunkExpr(TokenRange tokenRange, String value, TimeUnit timeUnit) {
+        super(tokenRange);
     }
 
     @Override
-    public <R, A> R accept( GenericVisitor<R, A> v, A arg ) {
+    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
         return v.getRuleGenericVisitor().visit(this, arg);
     }
 
     @Override
-    public <A> void accept( VoidVisitor<A> v, A arg ) {
-        v.getRuleVisitor().visit( this, arg );
+    public <A> void accept(VoidVisitor<A> v, A arg) {
+        v.getRuleVisitor().visit(this, arg);
     }
-
-    public NodeList<TemporalChunkExpr> getChunks() {
-        return chunks;
-    }
-
 }

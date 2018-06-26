@@ -3252,7 +3252,7 @@ TemporalLiteralArguments TemporalLiteralArguments():
 
 TemporalLiteralExpr TemporalLiteral():
 {
-	NodeList<TemporalLiteralChunkExpr> chunks = emptyList();
+	NodeList<TemporalChunkExpr> chunks = emptyList();
 	TemporalLiteralChunkExpr chunk;
 }
 {
@@ -3260,6 +3260,10 @@ TemporalLiteralExpr TemporalLiteral():
 	  <INTEGER_LITERAL>
 	  {
 	  		chunks.add(new TemporalLiteralChunkExpr(tokenRange(), token.image));
+	  }
+	| <STAR>
+	  {
+	  		chunks.add(new TemporalLiteralInfiniteChunkExpr(tokenRange(), token.image));
 	  }
 	|
 	  chunk = TemporalLiteralChunk() { chunks.add(chunk); }

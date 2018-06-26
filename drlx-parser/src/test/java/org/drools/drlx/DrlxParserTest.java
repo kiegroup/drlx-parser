@@ -153,6 +153,24 @@ public class DrlxParserTest {
         assertEquals("this after[5ms,8ms] $a", toDrlx(expression)); // please note the parsed expression once normalized would take the time unit for milliseconds.
     }
 
+    @Test
+    public void testDotFreeExprWithArgsInfinite() {
+        String expr = "this after[5s,*] $a";
+        Expression expression = parseExpression( parser, expr ).getExpr();
+        assertTrue(expression instanceof PointFreeExpr);
+        assertFalse(((PointFreeExpr)expression).isNegated());
+        assertEquals("this after[5s,*] $a", toDrlx(expression)); // please note the parsed expression once normalized would take the time unit for milliseconds.
+    }
+
+    @Test
+    public void testDotFreeExprWithThreeArgsInfinite() {
+        String expr = "this after[*,*,*,2s] $a";
+        Expression expression = parseExpression( parser, expr ).getExpr();
+        assertTrue(expression instanceof PointFreeExpr);
+        assertFalse(((PointFreeExpr)expression).isNegated());
+        assertEquals("this after[*,*,*,2s] $a", toDrlx(expression)); // please note the parsed expression once normalized would take the time unit for milliseconds.
+    }
+
 
     @Test
     public void testDotFreeExprWithArgsNegated() {
@@ -242,7 +260,7 @@ public class DrlxParserTest {
         TemporalLiteralExpr drlx = DrlxParser.parseTemporalLiteral(expr);
         assertEquals(expr, toDrlx(drlx));
         assertEquals(1, drlx.getChunks().size());
-        TemporalLiteralChunkExpr chunk0 = drlx.getChunks().get(0);
+        TemporalLiteralChunkExpr chunk0 = (TemporalLiteralChunkExpr) drlx.getChunks().get(0);
         assertEquals(5, chunk0.getValue());
         assertEquals(TimeUnit.SECONDS, chunk0.getTimeUnit());
     }
@@ -253,10 +271,10 @@ public class DrlxParserTest {
         TemporalLiteralExpr drlx = DrlxParser.parseTemporalLiteral(expr);
         assertEquals(expr, toDrlx(drlx));
         assertEquals(2, drlx.getChunks().size());
-        TemporalLiteralChunkExpr chunk0 = drlx.getChunks().get(0);
+        TemporalLiteralChunkExpr chunk0 = (TemporalLiteralChunkExpr) drlx.getChunks().get(0);
         assertEquals(1, chunk0.getValue());
         assertEquals(TimeUnit.MINUTES, chunk0.getTimeUnit());
-        TemporalLiteralChunkExpr chunk1 = drlx.getChunks().get(1);
+        TemporalLiteralChunkExpr chunk1 = (TemporalLiteralChunkExpr) drlx.getChunks().get(1);
         assertEquals(5, chunk1.getValue());
         assertEquals(TimeUnit.SECONDS, chunk1.getTimeUnit());
     }

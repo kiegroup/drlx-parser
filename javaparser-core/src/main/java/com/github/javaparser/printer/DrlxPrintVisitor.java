@@ -31,8 +31,10 @@ import com.github.javaparser.ast.drlx.expr.InlineCastExpr;
 import com.github.javaparser.ast.drlx.expr.NullSafeFieldAccessExpr;
 import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
 import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalChunkExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralChunkExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralInfiniteChunkExpr;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.BigDecimalLiteralExpr;
 import com.github.javaparser.ast.expr.BigIntegerLiteralExpr;
@@ -139,8 +141,8 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
     @Override
     public void visit(TemporalLiteralExpr temporalLiteralExpr, Void arg) {
         visitor.printComment(temporalLiteralExpr.getComment(), arg);
-        NodeList<TemporalLiteralChunkExpr> chunks = temporalLiteralExpr.getChunks();
-        for (TemporalLiteralChunkExpr c : chunks) {
+        NodeList<TemporalChunkExpr> chunks = temporalLiteralExpr.getChunks();
+        for (TemporalChunkExpr c : chunks) {
             c.accept(visitor, arg);
         }
     }
@@ -166,6 +168,11 @@ public class DrlxPrintVisitor extends AbstractVoidRuleVisitor<Void, PrettyPrintV
                 visitor.printer.print("d");
                 break;
         }
+    }
+
+    @Override
+    public void visit(TemporalLiteralInfiniteChunkExpr temporalLiteralInfiniteChunkExpr, Void arg) {
+        visitor.printer.print("*");
     }
 
     @Override
