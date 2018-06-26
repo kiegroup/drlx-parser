@@ -31,6 +31,7 @@ import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
 import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralChunkExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralInfiniteChunkExpr;
 import com.github.javaparser.ast.expr.BigDecimalLiteralExpr;
 import com.github.javaparser.ast.expr.BigIntegerLiteralExpr;
 
@@ -69,4 +70,6 @@ public interface VoidRuleVisitor<A> {
     default void visit(BigDecimalLiteralExpr bigDecimalLiteralExpr, A arg) {}
 
     default void visit(BigIntegerLiteralExpr bigIntegerLiteralExpr, A arg) {}
+
+    default void visit(TemporalLiteralInfiniteChunkExpr temporalLiteralInfiniteChunkExpr, A arg) { }
 }

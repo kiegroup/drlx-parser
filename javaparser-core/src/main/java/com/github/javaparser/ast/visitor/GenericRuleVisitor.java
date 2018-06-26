@@ -15,6 +15,7 @@ import com.github.javaparser.ast.drlx.expr.NullSafeMethodCallExpr;
 import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralChunkExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralExpr;
+import com.github.javaparser.ast.drlx.expr.TemporalLiteralInfiniteChunkExpr;
 import com.github.javaparser.ast.expr.BigDecimalLiteralExpr;
 import com.github.javaparser.ast.expr.BigIntegerLiteralExpr;
 
@@ -54,4 +55,6 @@ public interface GenericRuleVisitor<R, A> {
     default R visit(BigDecimalLiteralExpr bigDecimalLiteralExpr, A arg) { return null; }
 
     default R visit(BigIntegerLiteralExpr bigIntegerLiteralExpr, A arg) { return null; }
+
+    default R visit(TemporalLiteralInfiniteChunkExpr temporalLiteralInfiniteChunkExpr, A arg) { return null; }
 }
