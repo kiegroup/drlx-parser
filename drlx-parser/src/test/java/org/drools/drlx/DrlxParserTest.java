@@ -303,6 +303,25 @@ public class DrlxParserTest {
     }
 
     @Test
+    public void testAndWithImplicitNegativeParameter() {
+        String expr = "value > -2 && < -1";
+        Expression expression = parseExpression( parser, expr ).getExpr();
+        System.out.println(expression);
+
+        BinaryExpr comboExpr = ( (BinaryExpr) expression );
+        assertEquals(Operator.AND, comboExpr.getOperator());
+
+        BinaryExpr first = (BinaryExpr) comboExpr.getLeft();
+        assertEquals("value", first.getLeft().toString());
+        assertEquals("-2", first.getRight().toString());
+        assertEquals(Operator.GREATER, first.getOperator());
+
+        HalfBinaryExpr second = (HalfBinaryExpr) comboExpr.getRight();
+        assertEquals("-1", second.getRight().toString());
+        assertEquals(HalfBinaryExpr.Operator.LESS, second.getOperator());
+    }
+
+    @Test
     public void testOrWithImplicitParameter() {
         String expr = "name == \"Mark\" || == \"Mario\" || == \"Luca\"";
         Expression expression = parseExpression( parser, expr ).getExpr();
@@ -369,6 +388,30 @@ public class DrlxParserTest {
 
         HalfBinaryExpr third = (HalfBinaryExpr) comboExpr.getRight();
         assertEquals("\"Luca\"", third.getRight().toString());
+        assertEquals(HalfBinaryExpr.Operator.EQUALS, third.getOperator());
+    }
+
+    @Test
+    public void testAndWithImplicitParameter3() {
+        String expr = "age == 2 && == 3 || == 4";
+        Expression expression = parseExpression( parser, expr ).getExpr();
+        System.out.println(expression);
+
+        BinaryExpr comboExpr = ( (BinaryExpr) expression );
+        assertEquals(Operator.OR, comboExpr.getOperator());
+        assertEquals(Operator.AND, ((BinaryExpr)(comboExpr.getLeft())).getOperator());
+
+        BinaryExpr first = ((BinaryExpr)((BinaryExpr) comboExpr.getLeft()).getLeft());
+        assertEquals("age", first.getLeft().toString());
+        assertEquals("2", first.getRight().toString());
+        assertEquals(Operator.EQUALS, first.getOperator());
+
+        HalfBinaryExpr second = (HalfBinaryExpr) ((BinaryExpr) comboExpr.getLeft()).getRight();
+        assertEquals("3", second.getRight().toString());
+        assertEquals(HalfBinaryExpr.Operator.EQUALS, second.getOperator());
+
+        HalfBinaryExpr third = (HalfBinaryExpr) comboExpr.getRight();
+        assertEquals("4", third.getRight().toString());
         assertEquals(HalfBinaryExpr.Operator.EQUALS, third.getOperator());
     }
 
