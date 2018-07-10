@@ -465,6 +465,25 @@ public class DrlxParserTest {
 
     }
 
+    @Test
+    public void testAndWithImplicitNegativeParameter() {
+        String expr = "value > -2 && < -1";
+        Expression expression = parseExpression( parser, expr ).getExpr();
+        System.out.println(expression);
+
+        BinaryExpr comboExpr = ( (BinaryExpr) expression );
+        assertEquals(Operator.AND, comboExpr.getOperator());
+
+        BinaryExpr first = (BinaryExpr) comboExpr.getLeft();
+        assertEquals("value", first.getLeft().toString());
+        assertEquals("-2", first.getRight().toString());
+        assertEquals(Operator.GREATER, first.getOperator());
+
+        HalfBinaryExpr second = (HalfBinaryExpr) comboExpr.getRight();
+        assertEquals("-1", second.getRight().toString());
+        assertEquals(HalfBinaryExpr.Operator.LESS, second.getOperator());
+    }
+
 
     private void testMvelSquareOperator(String wholeExpression, String operator, String left, String right, boolean isNegated) {
         String expr = wholeExpression;
