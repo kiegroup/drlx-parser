@@ -9,6 +9,7 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.modules.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
+import com.github.javaparser.ast.visitor.GenericRuleVisitor;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.resolution.types.ResolvedType;
 
@@ -481,5 +482,10 @@ public class DefaultVisitorAdapter implements GenericVisitor<ResolvedType, Boole
     @Override
     public ResolvedType visit(SwitchExpr node, Boolean arg) {
         throw new UnsupportedOperationException(node.getClass().getCanonicalName());
+    }
+
+    @Override
+    public GenericRuleVisitor<ResolvedType, Boolean> getRuleGenericVisitor() {
+        return null;
     }
 }

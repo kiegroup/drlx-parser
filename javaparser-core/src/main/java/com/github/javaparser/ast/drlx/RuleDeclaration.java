@@ -16,30 +16,26 @@
 
 package com.github.javaparser.ast.drlx;
 
-import java.util.EnumSet;
-
-import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
-import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 
 public class RuleDeclaration extends TypeDeclaration<RuleDeclaration> {
 
     private final RuleBody ruleBody;
 
     public RuleDeclaration(TokenRange range, NodeList<AnnotationExpr> annotations, SimpleName name, RuleBody ruleBody ) {
-        super( range, EnumSet.noneOf(Modifier.class), annotations, name, new NodeList<>() );
+        super( range, NodeList.nodeList(), annotations, name, new NodeList<>() );
         this.ruleBody = ruleBody;
     }
 
     @Override
     public <R, A> R accept(final GenericVisitor<R, A> v, final A arg) {
-//        return v.visit(this, arg);
         throw new UnsupportedOperationException();
     }
 
@@ -50,5 +46,10 @@ public class RuleDeclaration extends TypeDeclaration<RuleDeclaration> {
 
     public RuleBody getRuleBody() {
         return ruleBody;
+    }
+
+    @Override
+    public ResolvedReferenceTypeDeclaration resolve() {
+        return null;
     }
 }

@@ -563,7 +563,7 @@ public final class JavaParserMetaModel {
         methodReferenceExprMetaModel.getDeclaredPropertyMetaModels().add(methodReferenceExprMetaModel.typeArgumentsPropertyMetaModel);
         methodReferenceExprMetaModel.usingDiamondOperatorPropertyMetaModel = new PropertyMetaModel(methodReferenceExprMetaModel, "usingDiamondOperator", boolean.class, Optional.empty(), false, false, false, false);
         methodReferenceExprMetaModel.getDerivedPropertyMetaModels().add(methodReferenceExprMetaModel.usingDiamondOperatorPropertyMetaModel);
-        nameExprMetaModel.backReferencesCountPropertyMetaModel = new PropertyMetaModel(nameExprMetaModel, "backReferencesCount", int.class, Optional.empty(), false, false, false, false, false);
+        nameExprMetaModel.backReferencesCountPropertyMetaModel = new PropertyMetaModel(nameExprMetaModel, "backReferencesCount", int.class, Optional.empty(), false, false, false, false);
         nameExprMetaModel.getDeclaredPropertyMetaModels().add(nameExprMetaModel.backReferencesCountPropertyMetaModel);
         nameExprMetaModel.namePropertyMetaModel = new PropertyMetaModel(nameExprMetaModel, "name", com.github.javaparser.ast.expr.SimpleName.class, Optional.of(simpleNameMetaModel), false, false, false, false);
         nameExprMetaModel.getDeclaredPropertyMetaModels().add(nameExprMetaModel.namePropertyMetaModel);

@@ -27,6 +27,7 @@ import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.comments.LineComment;
+import com.github.javaparser.ast.drlx.expr.HalfBinaryExpr;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.modules.*;
 import com.github.javaparser.ast.nodeTypes.*;
@@ -208,34 +209,16 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         }
 
         for (final Iterator<TypeDeclaration<?>> i = n.getTypes().iterator(); i.hasNext(); ) {
-            TypeDeclaration type = i.next();
-            vistType( type, arg, i );
+            i.next().accept(this, arg);
+            printer.println();
+            if (i.hasNext()) {
+                printer.println();
+            }
         }
 
         n.getModule().ifPresent(m -> m.accept(this, arg));
 
         printOrphanCommentsEnding(n);
-    }
-
-    private void vistType( TypeDeclaration type, Void arg, Iterator<?> i ) {
-        if ( acceptType( type ) ) {
-            type.accept( this, arg );
-            printer.println();
-            if ( i.hasNext() ) {
-                printer.println();
-            }
-        } else {
-            for ( final Iterator<BodyDeclaration<?>> j = type.getMembers().iterator(); j.hasNext(); ) {
-                BodyDeclaration body = j.next();
-                if (body instanceof TypeDeclaration) {
-                    vistType( ( (TypeDeclaration) body ), arg, j);
-                }
-            }
-        }
-    }
-
-    protected boolean acceptType(TypeDeclaration type) {
-        return true;
     }
 
     @Override
@@ -253,7 +236,7 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
     @Override
     public void visit(final NameExpr n, final Void arg) {
         printComment(n.getComment(), arg);
-        IntStream.range(0, n.getBackReferencesCount()).forEach(s -> printer.print("../"));
+        java.util.stream.IntStream.range(0, n.getBackReferencesCount()).forEach(s -> printer.print("../"));
         n.getName().accept(this, arg);
 
         printOrphanCommentsEnding(n);
@@ -1659,16 +1642,6 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
     }
 
     @Override
-    public VoidRuleVisitor<Void> getRuleVisitor() {
-        return ruleVisitor != null ? ruleVisitor : DUMMY_RULE_VISITOR;
-    }
-
-    public void setRuleVisitor( VoidRuleVisitor<Void> ruleVisitor ) {
-        this.ruleVisitor = ruleVisitor;
-    }
-
-    private void printOrphanCommentsBeforeThisChildNode( final Node node ) {
-    @Override
     public void visit(UnparsableStmt n, Void arg) {
         printer.print("???;");
     }
@@ -1728,10 +1701,11 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
     }
 
     @Override
-    public void visit(HalfBinaryExpr n, Void arg) {
-        printJavaComment(n.getComment(), arg);
-        printer.print(n.getOperator().asString());
-        printer.print(" ");
-        n.getRight().accept(this, arg);
+    public VoidRuleVisitor<Void> getRuleVisitor() {
+        return ruleVisitor != null ? ruleVisitor : DUMMY_RULE_VISITOR;
+    }
+
+    public void setRuleVisitor( VoidRuleVisitor<Void> ruleVisitor ) {
+        this.ruleVisitor = ruleVisitor;
     }
 }

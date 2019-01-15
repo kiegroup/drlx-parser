@@ -202,7 +202,8 @@ public class JavaToken {
         KEYWORD,
         LITERAL,
         SEPARATOR,
-        OPERATOR;
+        OPERATOR,
+        DRLX;
 
         public boolean isWhitespaceOrComment() {
             return isWhitespace() || this == COMMENT;

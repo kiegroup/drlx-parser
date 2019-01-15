@@ -1,1 +1,4 @@
-0 problems in 0 files
+com/github/javaparser/bdd/steps/SharedSteps.java
+(line 42,col 38) Parse error. Found "not", expected "*"
+
+1 problems in 1 files

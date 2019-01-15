@@ -129,7 +129,8 @@ public enum ObservableProperty {
     THEN_BLOCK(Type.SINGLE_ATTRIBUTE, true),
     USING_DIAMOND_OPERATOR(Type.SINGLE_ATTRIBUTE, true),
     RANGE,
-    COMMENTED_NODE;
+    COMMENTED_NODE,
+    BACK_REFERENCES_COUNT(Type.SINGLE_ATTRIBUTE);
 
     enum Type {
 

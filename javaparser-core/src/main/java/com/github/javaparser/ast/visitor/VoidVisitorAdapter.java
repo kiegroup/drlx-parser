@@ -103,13 +103,6 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
     }
 
     @Override
-    @Generated("com.github.javaparser.generator.core.visitor.VoidVisitorAdapterGenerator")
-    public void visit(final HalfBinaryExpr n, final A arg) {
-        n.getRight().accept(this, arg);
-        n.getComment().ifPresent(l -> l.accept(this, arg));
-    }
-
-    @Override
     public void visit(final BlockComment n, final A arg) {
         n.getComment().ifPresent(l -> l.accept(this, arg));
     }

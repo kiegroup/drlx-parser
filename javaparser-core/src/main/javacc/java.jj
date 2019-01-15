@@ -966,12 +966,11 @@ FieldDeclaration FieldDeclaration(ModifierHolder modifier):
 	VariableDeclarator val;
 }
 {
-  // Modifiers are already matched in the caller
-  partialType = Type(emptyList())
-          val = VariableDeclarator(partialType) { variables.add(val); }
-  ( "," val = VariableDeclarator(partialType) { variables.add(val); } )* ";"
-{
-    JavaToken begin = orIfInvalid(modifier.begin,partialType);
+    // Modifiers are already matched in the caller
+    partialType = Type(emptyList()) val = VariableDeclarator(partialType) { variables.add(val); }
+        ( "," val = VariableDeclarator(partialType) { variables.add(val); } )* ";"
+    {
+        JavaToken begin = orIfInvalid(modifier.begin, partialType);
         return new FieldDeclaration(range(begin, token()), modifier.modifiers, modifier.annotations, variables);
     }
 }
@@ -996,7 +995,8 @@ Pair<SimpleName, List<ArrayBracketPair>> VariableDeclaratorId():
 {
     name = SimpleName() { begin=token();}  ( arrayBracketPair = ArrayBracketPair(Origin.NAME) { arrayBracketPairs=add(arrayBracketPairs, arrayBracketPair); } )*
     {
-        if(storeTokens) {name.setTokenRange(name.getTokenRange().get().withEnd(token()));
+        if(storeTokens) {
+            name.setTokenRange(name.getTokenRange().get().withEnd(token()));
         }
         return new Pair(name, arrayBracketPairs);
     }
@@ -1449,7 +1449,7 @@ String Identifier():
 }
 {
     // Make sure the module info keywords don't interfere with normal Java parsing by matching them as normal identifiers.
-    (<RULE> |<MODULE> | <REQUIRES> | <TO> | <WITH> | <OPEN> | <OPENS> | <USES> | <EXPORTS> | <PROVIDES> | <TRANSITIVE> |
+    (<RULE> | <MODULE> | <REQUIRES> | <TO> | <WITH> | <OPEN> | <OPENS> | <USES> | <EXPORTS> | <PROVIDES> | <TRANSITIVE> |
     // Make sure older Java versions parse
     <ENUM> | <STRICTFP> |
     // An actual plain old identifier
@@ -1544,7 +1544,7 @@ Expression ConditionalOrExpression():
 	Expression right;
 }
 {
-  ret = ConditionalAndExpression() ( "||" right = ConditionalAndExpression() { ret = new BinaryExpr(range(ret.getTokenRange().get().getBegin(), token()), ret, right, BinaryExpr.Operator.OR); } )*
+  ret = ConditionalAndExpression() ( "||" right = ConditionalAndExpression() { ret = new BinaryExpr(range(ret, token()), ret, right, BinaryExpr.Operator.OR); } )*
   { return ret; }
 }
 
@@ -1554,7 +1554,7 @@ Expression ConditionalAndExpression():
 	Expression right;
 }
 {
-  ret = InclusiveOrExpression() ( "&&" right = InclusiveOrExpression() { ret = new BinaryExpr(range(ret.getTokenRange().get().getBegin(), token()), ret, right, BinaryExpr.Operator.AND); } )*
+  ret = InclusiveOrExpression() ( "&&" right = InclusiveOrExpression() { ret = new BinaryExpr(range(ret, token()), ret, right, BinaryExpr.Operator.AND); } )*
   { return ret; }
 }
 
@@ -2019,11 +2019,11 @@ Expression PrimarySuffixWithoutSuper(Expression scope):
 	|
 	  "#" {isDrl=true;}
 	  (
-	    name = SimpleName() { ret = new InlineCastExpr(range(scope.getBegin().get(), tokenEnd()),
-	                                                   new ClassOrInterfaceType(range(name.getBegin().get(), tokenEnd()), null, name, null),
+	    name = SimpleName() { ret = new InlineCastExpr(range(scope, token()),
+	                                                   new ClassOrInterfaceType(range(scope, token()), null, name, null, null),
 	                                                   scope); }
 	  |
-	    "(" type = Type() ")" { ret = new InlineCastExpr(range(scope.getBegin().get(), tokenEnd()), type, scope); }
+	    "(" type = Type(emptyList()) ")" { ret = new InlineCastExpr(range(scope, token()), type, scope); }
 	  )
 	|
   	  "!." {isDrl=true;}
@@ -2962,6 +2962,47 @@ Parameter ParameterParseStart():
 PackageDeclaration PackageDeclarationParseStart():
 { PackageDeclaration ret; }
 { ret = PackageDeclaration() <EOF> { return ret; } }
+
+TypeDeclaration<?> TypeDeclarationParseStart():
+{
+	TypeDeclaration<?> ret;
+	ModifierHolder modifier;
+}
+{
+	modifier = Modifiers()
+	(ret = ClassOrInterfaceDeclaration(modifier)
+	|ret = EnumDeclaration(modifier)
+	|ret = AnnotationTypeDeclaration(modifier)
+	)
+	<EOF>
+	{return ret;}
+}
+
+ModuleDeclaration ModuleDeclarationParseStart():
+{
+	ModuleDeclaration ret;
+ 	ModifierHolder modifiers;
+}
+{
+	modifiers = Modifiers()
+	ret = ModuleDeclaration(modifiers)
+	<EOF>
+	{ return ret; }
+}
+
+ModuleDirective ModuleDirectiveParseStart():
+{ ModuleDirective ret; }
+{ ret = ModuleDirective() <EOF> { return ret; } }
+
+TypeParameter TypeParameterParseStart():
+{
+	TypeParameter ret;
+	NodeList<AnnotationExpr> annotations;
+}
+{
+   annotations = Annotations() ret = TypeParameter(annotations) <EOF>
+   { return ret; }
+}
 
 /* Rule syntax follows */
 
