@@ -24,9 +24,12 @@ import java.util.concurrent.TimeUnit;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ParseStart;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.drlx.OOPathChunk;
 import com.github.javaparser.ast.drlx.OOPathExpr;
+import com.github.javaparser.ast.drlx.expr.CommaSeparatedMethodCallExpr;
 import com.github.javaparser.ast.drlx.expr.DrlxExpression;
+import com.github.javaparser.ast.drlx.expr.HalfBinaryExpr;
 import com.github.javaparser.ast.drlx.expr.HalfPointFreeExpr;
 import com.github.javaparser.ast.drlx.expr.PointFreeExpr;
 import com.github.javaparser.ast.drlx.expr.TemporalLiteralChunkExpr;
@@ -35,21 +38,15 @@ import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
-import com.github.javaparser.ast.drlx.expr.HalfBinaryExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.github.javaparser.printer.PrintUtil.toDrlx;
 import static org.drools.drlx.DrlxParser.parseExpression;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class DrlxParserTest {
 
@@ -510,6 +507,8 @@ public class DrlxParserTest {
 
     @Test
     public void testMethodCallWithComma() {
+        System.out.println("CommaSeparatedMethodCallExpr.class.toString() = " + CommaSeparatedMethodCallExpr.class.toString());
+        System.out.println("new ClassOrInterfaceDeclaration().getModifiers().getClass() = " + new ClassOrInterfaceDeclaration().getModifiers().getClass());
         String expr = "setAge(1), setLikes(\"bread\");";
 
         Expression expression = parseExpression(parser, expr).getExpr();
