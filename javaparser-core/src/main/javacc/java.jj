@@ -1992,6 +1992,7 @@ Expression PrimarySuffixWithoutSuper(Expression scope):
 	SimpleName name;
 	Type type;
 	boolean isDrl = false;
+	NodeList<AnnotationExpr> annotations = new NodeList<AnnotationExpr>();
 }
 {
   (
@@ -2020,7 +2021,7 @@ Expression PrimarySuffixWithoutSuper(Expression scope):
 	  "#" {isDrl=true;}
 	  (
 	    name = SimpleName() { ret = new InlineCastExpr(range(scope, token()),
-	                                                   new ClassOrInterfaceType(range(scope, token()), null, name, null, null),
+	                                                   new ClassOrInterfaceType(range(scope, token()), null, name, null, annotations),
 	                                                   scope); }
 	  |
 	    "(" type = Type(emptyList()) ")" { ret = new InlineCastExpr(range(scope, token()), type, scope); }
