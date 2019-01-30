@@ -7,6 +7,7 @@ enriching plain Java parsing with Drools drlx syntax.
 Instruction to Rebase
 
 - Rebase against tags, not snapshot
+- Always search and replace to verify versions
 - Accept theirs on every pom.xml
 - Replace every parent pom from `<groupId>com.github.javaparser</groupId>` to `<groupId>org.drools.javaparser</groupId>`
 - MethodCallExpr FieldAccessExpr not final
