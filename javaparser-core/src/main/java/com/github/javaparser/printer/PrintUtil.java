@@ -40,7 +40,12 @@ public class PrintUtil {
 
     private static PrettyPrinterConfiguration getConf( Function<PrettyPrintVisitor, VoidRuleVisitor<Void>> f, Predicate<TypeDeclaration> p ) {
         return new PrettyPrinterConfiguration().setVisitorFactory( c -> {
-            PrettyPrintVisitor visitor = new PrettyPrintVisitor( c );
+            PrettyPrintVisitor visitor = new PrettyPrintVisitor( c ){
+                @Override
+                protected boolean acceptType(TypeDeclaration type ) {
+                    return p.test( type );
+                }
+            };
             visitor.setRuleVisitor( f.apply( visitor ) );
             return visitor;
         } );

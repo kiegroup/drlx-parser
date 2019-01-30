@@ -27,7 +27,6 @@ import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.comments.LineComment;
-import com.github.javaparser.ast.drlx.expr.HalfBinaryExpr;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.modules.*;
 import com.github.javaparser.ast.nodeTypes.*;
@@ -209,16 +208,35 @@ public class PrettyPrintVisitor implements VoidVisitor<Void> {
         }
 
         for (final Iterator<TypeDeclaration<?>> i = n.getTypes().iterator(); i.hasNext(); ) {
-            i.next().accept(this, arg);
-            printer.println();
-            if (i.hasNext()) {
-                printer.println();
-            }
+            TypeDeclaration type = i.next();
+            visitType(type, arg, i );
         }
 
         n.getModule().ifPresent(m -> m.accept(this, arg));
 
         printOrphanCommentsEnding(n);
+    }
+
+    // DRLX used to filter drl from drlx
+    private void visitType(TypeDeclaration type, Void arg, Iterator<?> i ) {
+        if ( acceptType( type ) ) {
+            type.accept( this, arg );
+            printer.println();
+            if ( i.hasNext() ) {
+                printer.println();
+            }
+        } else {
+            for ( final Iterator<BodyDeclaration<?>> j = type.getMembers().iterator(); j.hasNext(); ) {
+                BodyDeclaration body = j.next();
+                if (body instanceof TypeDeclaration) {
+                    visitType(( (TypeDeclaration) body ), arg, j);
+                }
+            }
+        }
+    }
+
+    protected boolean acceptType(TypeDeclaration type) {
+        return true;
     }
 
     @Override
