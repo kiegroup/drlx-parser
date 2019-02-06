@@ -132,18 +132,6 @@
         <!-- Maven Plugins -->
     </properties>
 
-    <scm>
-        <connection>scm:git:git://github.com/javaparser/javaparser.git</connection>
-        <developerConnection>scm:git:git@github.com:javaparser/javaparser.git</developerConnection>
-        <url>https://github.com/javaparser/javaparser.git</url>
-        <tag>javaparser-parent-3.10.2</tag>
-    </scm>
-
-    <issueManagement>
-        <system>GitHub Issue Tracker</system>
-        <url>https://github.com/javaparser/javaparser/issues</url>
-    </issueManagement>
-
     <build>
         <plugins>
             <plugin>
