@@ -144,14 +144,6 @@
         <url>https://github.com/javaparser/javaparser/issues</url>
     </issueManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>bintray-javaparser-JavaParser</id>
-            <name>javaparser-JavaParser</name>
-            <url>https://api.bintray.com/maven/javaparser/JavaParser/javaparser/;publish=1</url>
-        </repository>
-    </distributionManagement>
-
     <build>
         <plugins>
             <plugin>
