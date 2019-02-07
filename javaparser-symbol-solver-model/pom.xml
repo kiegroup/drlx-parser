@@ -28,6 +28,7 @@
     <properties>
         <java.version>1.8</java.version>
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
+      <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
   <dependencies>

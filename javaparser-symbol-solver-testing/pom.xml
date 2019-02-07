@@ -24,6 +24,10 @@
         </license>
     </licenses>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <profiles>
         <profile>
             <id>NonSlowTests</id>
